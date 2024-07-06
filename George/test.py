@@ -3,6 +3,8 @@ import time
 import matplotlib.pyplot as plt
 import numpy as np
 
+# testing git branching
+
 def read_csv(filename):
     stocks = []
     with open(filename, 'r') as csvfile:
