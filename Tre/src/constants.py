@@ -43,6 +43,6 @@ controls_x = WINDOWSIZE[0] / 2 - basic_controls.get_width()/2
 sort_controls = FONT2.render("H - Heap Sort | M - Merge Sort", 1, TEXT_COLOR1)
 
 # Sorting Range
-n = 200
+n = 80
 min_val = 50
 max_val = 150

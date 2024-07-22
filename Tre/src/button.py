@@ -40,6 +40,8 @@ class Button(pg.sprite.Sprite):
         else:
             self.dynamic_elevation = self.elevation
 
+        return self.pressed
+
     def draw_button_background(self):
         if self.pressed == True:
             self.screen.blit(self.bg_surf, self.top_rect)

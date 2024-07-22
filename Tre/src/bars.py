@@ -14,7 +14,7 @@ def calc_parameters(total_len):
     return parameters
 
 
-def get_bars(sorted_lst, unsorted_lst, unsorted_start_x, u_min_val, u_max_val):
+def get_bars(sorted_lst, unsorted_lst, unsorted_start_x, u_min_val, u_max_val, new_element_idx=None):
     if not sorted_lst and not unsorted_lst:  # Ensure the array is not empty
         return []
     bar_list = []

@@ -55,15 +55,15 @@ class Heap:
             if self.heap_type == "min":
                 if self.key(self.arr[child]) < self.key(self.arr[parent]):
                     self.arr[child], self.arr[parent] = self.arr[parent], self.arr[child]
-                    self.draw()
-                    pg.time.delay(50)
+                    self.display(child)
+                    pg.time.delay(200)
                 else:
                     break
             else:
                 if self.key(self.arr[child]) > self.key(self.arr[parent]):
                     self.arr[child], self.arr[parent] = self.arr[parent], self.arr[child]
-                    self.draw()
-                    pg.time.delay(50)
+                    self.display(child)
+                    pg.time.delay(200)
                 else:
                     break
 
@@ -119,13 +119,13 @@ class Heap:
                             gs.stop = True
                             gs.sort = False
 
-    def draw(self):
+    def display(self, new_ele_idx=None):
         bar_width = (WINDOWSIZE[0] - TOTAL_SIDE_PAD) / (self.size + len(self.unsorted_arr))
         unsorted_start_x = SIDE_PAD + len(self.arr) * bar_width
 
-        bars = get_bars(self.arr, self.unsorted_arr, unsorted_start_x, self.min_val, self.max_val)
+        bars = get_bars(self.arr, self.unsorted_arr, unsorted_start_x, self.min_val, self.max_val, new_ele_idx)
 
-        draw(self.screen, self.buttons_group, bars)
+        draw(self.screen, self.buttons_group, bars, new_ele_idx)
         pg.display.update()
 
 
