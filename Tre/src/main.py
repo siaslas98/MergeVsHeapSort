@@ -9,6 +9,8 @@ from bars import *
 from draw import *
 
 pg.init()
+pg.mixer.init()
+pg.mixer.music.load("../22.mp3")
 screen = pg.display.set_mode(WINDOWSIZE)
 pg.display.set_caption("Sorting Algorithm Visualizer")
 clock = pg.time.Clock()  # For controlling framerate
@@ -16,8 +18,10 @@ clock = pg.time.Clock()  # For controlling framerate
 
 class GS:
     sort = False
+    stop = True
     click = False
     ascending = True
+    lst_sorted = False
 
 
 def disp_message(text, font, color, x, y):
@@ -57,7 +61,7 @@ min_heap = Heap(screen, unsorted_lst, buttons_group)  # Instantiate heap
 bars = get_bars(min_heap.arr, unsorted_lst, SIDE_PAD, min(unsorted_lst), max(unsorted_lst))  # Generate Bar rectangles for drawing
 
 
-def main_menu():
+def sort_display():
     global unsorted_lst, min_heap, bars
     while True:
         for event in pg.event.get():
@@ -65,11 +69,13 @@ def main_menu():
                 sys.exit()
 
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_SPACE and not gs.sort:
+                if event.key == pg.K_SPACE and gs.stop:
+                    gs.stop = False
                     gs.sort = True
 
                 if event.key == pg.K_r:  # Reset
                     gs.sort = False
+                    gs.stop = True
                     unsorted_lst = gen_starting_list()
                     min_heap = Heap(screen, unsorted_lst, buttons_group)
                     bars = get_bars(min_heap.arr, unsorted_lst, SIDE_PAD, min(unsorted_lst), max(unsorted_lst))
@@ -87,19 +93,22 @@ def main_menu():
                         if button.name == 'Stop':
                             gs.stop = True
 
-        if gs.sort:
-            min_heap.insert_unsorted(gs)
-            gs.sort = False
-
-        elif not gs.sort and min_heap.size == 0:
+        if gs.stop and min_heap.size == 0:
             draw(screen, buttons_group, bars)
+
+        elif gs.sort:
+            pg.mixer.music.play(-1)
+            min_heap.insert_unsorted(gs)
+            heap_sort(min_heap, gs)
+            gs.sort = False
+            pg.mixer.music.stop()
 
         pg.display.update()
         clock.tick(60)
 
 
 def main():
-    main_menu()
+    sort_display()
 
 
 if __name__ == "__main__":
