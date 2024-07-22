@@ -12,9 +12,12 @@ pg.init()
 screen = pg.display.set_mode(WINDOWSIZE)
 pg.display.set_caption("Sorting Algorithm Visualizer")
 clock = pg.time.Clock()  # For controlling framerate
-sort = False
-click = False
-ascending = True
+
+
+class GS:
+    sort = False
+    click = False
+    ascending = True
 
 
 def disp_message(text, font, color, x, y):
@@ -40,6 +43,8 @@ def gen_buttons():
     return buttons_lst
 
 
+gs = GS()  # This contains game state variables
+
 # Load images here and store in Images class
 images = Images()
 
@@ -53,35 +58,40 @@ bars = get_bars(min_heap.arr, unsorted_lst, SIDE_PAD, min(unsorted_lst), max(uns
 
 
 def main_menu():
-    global click, sort, ascending, unsorted_lst, min_heap, bars
+    global unsorted_lst, min_heap, bars
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 sys.exit()
 
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_SPACE and not sort:
-                    sort = True
+                if event.key == pg.K_SPACE and not gs.sort:
+                    gs.sort = True
 
                 if event.key == pg.K_r:  # Reset
-                    sort = False
+                    gs.sort = False
                     unsorted_lst = gen_starting_list()
                     min_heap = Heap(screen, unsorted_lst, buttons_group)
                     bars = get_bars(min_heap.arr, unsorted_lst, SIDE_PAD, min(unsorted_lst), max(unsorted_lst))
 
                 # Controls min or max sorting order
-                if event.key == pg.K_a and not sort and not ascending:
-                    ascending = True
+                if event.key == pg.K_a and not gs.sort and not gs.ascending:
+                    gs.ascending = True
 
             if event.type == pg.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    click = True
+                for button in buttons_group:
+                    if button.check_click():
+                        if button.name == 'Sort':
+                            gs.sort = True
+                            gs.stop = False
+                        if button.name == 'Stop':
+                            gs.stop = True
 
-        if sort:
-            min_heap.insert_unsorted()
-            sort = False
+        if gs.sort:
+            min_heap.insert_unsorted(gs)
+            gs.sort = False
 
-        elif not sort and min_heap.size == 0:
+        elif not gs.sort and min_heap.size == 0:
             draw(screen, buttons_group, bars)
 
         pg.display.update()

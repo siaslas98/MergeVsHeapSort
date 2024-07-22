@@ -1,3 +1,4 @@
+import sys
 import pygame as pg
 from bars import get_bars
 from draw import *
@@ -15,15 +16,19 @@ class Heap:
         self.min_val = min(unsorted_arr)
         self.max_val = max(unsorted_arr)
 
-    def insert(self, x):
+    def insert(self, x, gs):
         self.arr.append(x)
         self.unsorted_arr.pop()
         self.size += 1
-        self.heapify_up(self.size - 1)  # Heapify up from the last element
+        self.heapify_up(self.size - 1, gs)  # Heapify up from the last element
 
-    def insert_unsorted(self):
+    def insert_unsorted(self, gs):
         for i in reversed(self.unsorted_arr):
-            self.insert(i)
+            self.handle_events(gs)
+
+            if not gs.sort:
+                break
+            self.insert(i, gs)
 
     # Accesses the min or max element in the heap
     def get(self):
@@ -43,26 +48,30 @@ class Heap:
             self.size -= 1
         return root
 
-    def heapify_up(self, child):
+    def heapify_up(self, child, gs):
         parent = (child - 1) // 2
-        while child > 0:
+        while child > 0 and gs.sort:
+
             if self.heap_type == "min":
                 if self.key(self.arr[child]) < self.key(self.arr[parent]):
                     self.arr[child], self.arr[parent] = self.arr[parent], self.arr[child]
                     self.draw()
-                    pg.time.delay(250)
+                    pg.time.delay(50)
                 else:
                     break
             else:
                 if self.key(self.arr[child]) > self.key(self.arr[parent]):
                     self.arr[child], self.arr[parent] = self.arr[parent], self.arr[child]
                     self.draw()
-                    pg.time.delay(250)
+                    pg.time.delay(50)
                 else:
                     break
 
             child = parent
             parent = (child - 1) // 2
+            self.handle_events(gs)
+            if not gs.sort:
+                break
 
     def heapify_down(self, parent):
         left = 2 * parent + 1
@@ -95,6 +104,20 @@ class Heap:
                 self.heapify_down(child)
         return
 
+    def handle_events(self, gs):
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pg.quit()
+                sys.exit()
+            if event.type == pg.MOUSEBUTTONDOWN:
+                for button in self.buttons_group:
+                    if button.check_click():
+                        if button.name == 'Sort':
+                            gs.sort = True
+                            gs.stop = False
+                        elif button.name == 'Stop':
+                            gs.stop = True
+                            gs.sort = False
 
     def draw(self):
         bar_width = (WINDOWSIZE[0] - TOTAL_SIDE_PAD) / (self.size + len(self.unsorted_arr))
