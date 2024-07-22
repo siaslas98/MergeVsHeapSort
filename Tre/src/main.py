@@ -78,10 +78,7 @@ def main_menu():
                     click = True
 
         if sort:
-            print(unsorted_lst)
             min_heap.insert_unsorted()
-            print(min_heap.arr)
-            print(min_heap.min_val)
             sort = False
 
         elif not sort and min_heap.size == 0:
