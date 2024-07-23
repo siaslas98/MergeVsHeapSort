@@ -36,14 +36,21 @@ IMAGE_DICT = {'../imgs/Blank.png': 'Blank'}
 SCALE = 1
 ELEVATION = 1.5
 
+# Define vertical offset between title and tips
+TITLE_TO_TIPS_OFFSET = 20
+
 sorting_bottom = int(WINDOWSIZE[1] * 0.85)
 
 basic_controls = FONT2.render("R - Reset | SPACE - Start Sorting | A - Ascending | D - Descending", 1, TEXT_COLOR1)
 controls_x = WINDOWSIZE[0] / 2 - basic_controls.get_width()/2
 sort_controls = FONT2.render("H - Heap Sort | M - Merge Sort", 1, TEXT_COLOR1)
 
-Menu_words = FONT1.render("Sorting Algorithm Visualizer", 1, TEXT_COLOR1)
-controls_menu = WINDOWSIZE[0] / 2 - Menu_words.get_width()/2
+Menu_Title = FONT1.render("Sorting Algorithm Visualizer", 1, TEXT_COLOR1)
+controls_menu = WINDOWSIZE[0] / 2 - Menu_Title.get_width()/2
+
+Menu_tips = FONT2.render("Click on the buttons to select the sorting algorithm and order", 1, TEXT_COLOR1)
+controls_menu_tips = controls_menu + Menu_Title.get_height() + TITLE_TO_TIPS_OFFSET
+
 
 # Sorting Range
 n = 80
