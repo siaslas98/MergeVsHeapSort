@@ -1,5 +1,6 @@
 import sys
 import random
+import pygame as pg
 from images import *
 from button import *
 from constants import *
@@ -15,20 +16,19 @@ screen = pg.display.set_mode(WINDOWSIZE)
 pg.display.set_caption("Sorting Algorithm Visualizer")
 clock = pg.time.Clock()  # For controlling framerate
 
-
 class GS:
     sort = False
     stop = True
     click = False
     ascending = True
     lst_sorted = False
-
+    selected_sort = None
+    selected_order = None
 
 def disp_message(text, font, color, x, y):
     message = font.render(text, True, color)
     message_rect = message.get_rect(center=(x, y))
     screen.blit(message, message_rect)
-
 
 def gen_starting_list():
     lst = []
@@ -37,8 +37,7 @@ def gen_starting_list():
         lst.append(num)
     return lst
 
-
-def gen_buttons():
+def gen_buttons(images):
     buttons_lst = []
     sort_button = Button(screen, images, 'Sort', SORT[0], SORT[1], SCALE, ELEVATION)
     stop_button = Button(screen, images, 'Stop', STOP[0], STOP[1], SCALE, ELEVATION)
@@ -46,23 +45,70 @@ def gen_buttons():
     buttons_lst.append(stop_button)
     return buttons_lst
 
+def gen_menu_buttons(images):
+    buttons_lst = []
+    heap_sort_button = Button(screen, images, 'Heap Sort', 500, 200, SCALE, ELEVATION)
+    merge_sort_button = Button(screen, images, 'Merge Sort', 500, 300, SCALE, ELEVATION)
+    asc_button = Button(screen, images, 'Ascending', 500, 400, SCALE, ELEVATION)
+    desc_button = Button(screen, images, 'Descending', 500, 500, SCALE, ELEVATION)
+    buttons_lst.extend([heap_sort_button, merge_sort_button, asc_button, desc_button])
+    return buttons_lst
 
-gs = GS()  # This contains game state variables
+def menu_display(images):
+    global gs
 
-# Load images here and store in Images class
-images = Images()
+    while True:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pg.quit()
+                sys.exit()
+            # if inside of the button and pressed
+            if event.type == pg.MOUSEBUTTONDOWN:
+                for button in menu_buttons_group:
+                    if button.check_click():
+                        if button.name == 'Heap Sort':
+                            gs.selected_sort = 'Heap Sort'
+                            for btn in menu_buttons_group:
+                                if btn.name != 'Heap Sort':
+                                    btn.pressed = False
+                        elif button.name == 'Merge Sort':
+                            gs.selected_sort = 'Merge Sort'
+                            for btn in menu_buttons_group:
+                                if btn.name != 'Merge Sort':
+                                    btn.pressed = False
+                        elif button.name == 'Ascending':
+                            gs.selected_order = 'Ascending'
+                            for btn in menu_buttons_group:
+                                if btn.name != 'Ascending':
+                                    btn.pressed = False
+                        elif button.name == 'Descending':
+                            gs.selected_order = 'Descending'
+                            for btn in menu_buttons_group:
+                                if btn.name != 'Descending':
+                                    btn.pressed = False
 
-# Create sprite group for buttons
-buttons = gen_buttons()
-buttons_group = pg.sprite.Group(buttons)
+            if gs.selected_sort and gs.selected_order:
+                return  # Exit the menu when both sort and order are selected
 
-unsorted_lst = gen_starting_list()  # Generate list to sort
-min_heap = Heap(screen, unsorted_lst, buttons_group)  # Instantiate heap
-bars = get_bars(min_heap.arr, unsorted_lst, SIDE_PAD, min(unsorted_lst), max(unsorted_lst))  # Generate Bar rectangles for drawing
+        draw(screen, menu_buttons_group)  # Use the draw function from draw.py
+        pg.display.update()
+        clock.tick(60)
 
 
-def sort_display():
-    global unsorted_lst, min_heap, bars
+def sort_display(images):
+    global unsorted_lst, min_heap, bars, buttons_group
+    # Adjust this based on selected_sort and selected_order
+    if gs.selected_sort == 'Heap Sort':
+        sort_function = heap_sort
+    elif gs.selected_sort == 'Merge Sort':
+        sort_function = merge_sort
+    else:
+        raise ValueError("No valid sorting algorithm selected")
+    
+    unsorted_lst = gen_starting_list()
+    min_heap = Heap(screen, unsorted_lst, buttons_group)  # Instantiate heap
+    bars = get_bars(min_heap.arr, unsorted_lst, SIDE_PAD, min(unsorted_lst), max(unsorted_lst))  # Generate Bar rectangles for drawing
+    
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -99,17 +145,30 @@ def sort_display():
         elif gs.sort:
             pg.mixer.music.play(-1)
             min_heap.insert_unsorted(gs)
-            heap_sort(min_heap, gs)
+            sort_function(min_heap, gs)
             gs.sort = False
             pg.mixer.music.stop()
 
         pg.display.update()
         clock.tick(60)
 
-
 def main():
-    sort_display()
+    global gs, buttons_group, menu_buttons_group
+    gs = GS()  # Initialize the game state
+    
+    # Initialize images
+    images = Images()
 
+    menu_buttons = gen_menu_buttons(images)
+    menu_buttons_group = pg.sprite.Group(menu_buttons)
+    
+    menu_display(images)
+    
+    # Initialize the buttons for sorting display
+    buttons = gen_buttons(images)
+    buttons_group = pg.sprite.Group(buttons)
+    
+    sort_display(images)
 
 if __name__ == "__main__":
     main()

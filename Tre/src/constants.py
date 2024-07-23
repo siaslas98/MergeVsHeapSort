@@ -3,8 +3,8 @@ import pygame as pg
 pg.init()
 
 # Display size
-#WINDOWSIZE = (900, 500)
-WINDOWSIZE = (1800, 1000)
+WINDOWSIZE = (1200, 800)
+#WINDOWSIZE = (1800, 1000)
 
 # Padding
 TOTAL_SIDE_PAD = 100
@@ -41,6 +41,9 @@ sorting_bottom = int(WINDOWSIZE[1] * 0.85)
 basic_controls = FONT2.render("R - Reset | SPACE - Start Sorting | A - Ascending | D - Descending", 1, TEXT_COLOR1)
 controls_x = WINDOWSIZE[0] / 2 - basic_controls.get_width()/2
 sort_controls = FONT2.render("H - Heap Sort | M - Merge Sort", 1, TEXT_COLOR1)
+
+Menu_words = FONT1.render("Sorting Algorithm Visualizer", 1, TEXT_COLOR1)
+controls_menu = WINDOWSIZE[0] / 2 - Menu_words.get_width()/2
 
 # Sorting Range
 n = 80
