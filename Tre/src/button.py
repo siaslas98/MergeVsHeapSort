@@ -15,14 +15,20 @@ class Button(pg.sprite.Sprite):
 
         # Background
         self.bg_surf = images.get_image('Blank')
-        self.top_rect = self.bg_surf.get_rect(bottomleft=(self.x_pos, self.y_pos))
-        self.top_rect_elevated = self.bg_surf.get_rect(bottomleft=(self.x_pos, self.y_pos - self.dynamic_elevation))
-        self.bottom_rect = self.bg_surf.get_rect(bottomleft=(self.x_pos, self.y_pos + self.dynamic_elevation))
+        self.image = self.bg_surf  # Assign to self.image for compatibility with pygame.sprite.Sprite
+        self.rect = self.bg_surf.get_rect(topleft=(self.x_pos, self.y_pos))  # Assign to self.rect for compatibility
+
+        self.top_rect = self.rect.copy()
+        self.top_rect_elevated = self.rect.copy()
+        self.top_rect_elevated.y -= self.dynamic_elevation
+        self.bottom_rect = self.rect.copy()
+        self.bottom_rect.y += self.dynamic_elevation
 
         # Text
-        self.text_surf1 = c.FONT2.render(name, True, c.TEXT_COLOR1)
-        self.text_surf2 = c.FONT2.render(name, True, c.TEXT_COLOR2)
-        self.text_surf_ele = c.FONT2.render(name, True, c.TEXT_COLOR2)
+        self.text_color = (255, 255, 255)  # White color
+        self.text_surf1 = c.FONT2.render(name, True, self.text_color)
+        self.text_surf2 = c.FONT2.render(name, True, self.text_color)
+        self.text_surf_ele = c.FONT2.render(name, True, self.text_color)
         self.text_rect1 = self.text_surf1.get_rect(center=self.top_rect.center)
         self.text_rect2 = self.text_surf2.get_rect(center=self.top_rect.center)
         self.text_rect_ele = self.text_surf_ele.get_rect(center=self.top_rect_elevated.center)
@@ -43,7 +49,7 @@ class Button(pg.sprite.Sprite):
         return self.pressed
 
     def draw_button_background(self):
-        if self.pressed == True:
+        if self.pressed:
             self.screen.blit(self.bg_surf, self.top_rect)
         else:
             self.screen.blit(self.bg_surf, self.bottom_rect)
