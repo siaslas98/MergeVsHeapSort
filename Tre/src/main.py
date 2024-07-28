@@ -5,6 +5,7 @@ from images import *
 from button import *
 from constants import *
 from heap import Heap
+import merge_sort
 from sorting import *
 from bars import *
 from draw import *
