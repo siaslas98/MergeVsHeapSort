@@ -60,8 +60,8 @@ def gen_menu_buttons(images):
     return buttons_lst
 
 
-def menu_display(images):
-    global gs
+def menu_display():
+    global gs, images
 
     while True:
         for event in pg.event.get():
@@ -102,8 +102,8 @@ def menu_display(images):
         clock.tick(60)
 
 
-def sort_display(images):
-    # global unsorted_lst, min_heap, bars, sort_buttons_group
+def sort_display():
+    global gs, images
     # Adjust this based on selected_sort and selected_order
     if gs.selected_sort == 'Heap Sort':
         sort_function = heap_sort
@@ -174,13 +174,13 @@ def main():
     menu_buttons = gen_menu_buttons(images)
     menu_buttons_group = pg.sprite.Group(menu_buttons)
     
-    menu_display(images)
+    menu_display()
     
     # Define sort buttons
     buttons = gen_sort_buttons(images)
     sort_buttons_group = pg.sprite.Group(buttons)
     
-    sort_display(images)
+    sort_display()
 
 if __name__ == "__main__":
     main()
