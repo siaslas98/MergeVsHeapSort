@@ -17,6 +17,7 @@ screen = pg.display.set_mode(WINDOWSIZE)
 pg.display.set_caption("Sorting Algorithm Visualizer")
 clock = pg.time.Clock()  # For controlling framerate
 
+
 class GS:
     sort = False
     stop = True
@@ -26,10 +27,12 @@ class GS:
     selected_sort = None
     selected_order = None
 
+
 def disp_message(text, font, color, x, y):
     message = font.render(text, True, color)
     message_rect = message.get_rect(center=(x, y))
     screen.blit(message, message_rect)
+
 
 def gen_starting_list():
     lst = []
@@ -38,12 +41,14 @@ def gen_starting_list():
         lst.append(num)
     return lst
 
-def gen_buttons(images):
+
+def gen_sort_buttons(images):
     buttons_lst = []
     sort_button = Button(screen, images, 'Sort', SORT[0], SORT[1], SCALE, ELEVATION)
     stop_button = Button(screen, images, 'Stop', STOP[0], STOP[1], SCALE, ELEVATION)
-    buttons_lst.extend(sort_button, stop_button)
+    buttons_lst.extend([sort_button, stop_button])
     return buttons_lst
+
 
 def gen_menu_buttons(images):
     buttons_lst = []
@@ -54,6 +59,7 @@ def gen_menu_buttons(images):
     buttons_lst.extend([heap_sort_button, merge_sort_button, asc_button, desc_button])
     return buttons_lst
 
+
 def menu_display(images):
     global gs
 
@@ -62,12 +68,13 @@ def menu_display(images):
             if event.type == pg.QUIT:
                 pg.quit()
                 sys.exit()
-            # if inside of the button and pressed
+            # If mouse inside borders of button and pressed
             if event.type == pg.MOUSEBUTTONDOWN:
                 for button in menu_buttons_group:
                     if button.check_click():
                         if button.name == 'Heap Sort':
                             gs.selected_sort = 'Heap Sort'
+                            # Make sure only the Heap Sort button is pressed
                             for btn in menu_buttons_group:
                                 if btn.name != 'Heap Sort':
                                     btn.pressed = False
@@ -96,7 +103,7 @@ def menu_display(images):
 
 
 def sort_display(images):
-    global unsorted_lst, min_heap, bars, buttons_group
+    # global unsorted_lst, min_heap, bars, sort_buttons_group
     # Adjust this based on selected_sort and selected_order
     if gs.selected_sort == 'Heap Sort':
         sort_function = heap_sort
@@ -106,7 +113,7 @@ def sort_display(images):
         raise ValueError("No valid sorting algorithm selected")
     
     unsorted_lst = gen_starting_list()
-    min_heap = Heap(screen, unsorted_lst, buttons_group)  # Instantiate heap
+    min_heap = Heap(screen, unsorted_lst, sort_buttons_group)  # Instantiate heap
     bars = get_bars(min_heap.arr, unsorted_lst, SIDE_PAD, min(unsorted_lst), max(unsorted_lst))  # Generate Bar rectangles for drawing
     
     while True:
@@ -123,7 +130,7 @@ def sort_display(images):
                     gs.sort = False
                     gs.stop = True
                     unsorted_lst = gen_starting_list()
-                    min_heap = Heap(screen, unsorted_lst, buttons_group)
+                    min_heap = Heap(screen, unsorted_lst, sort_buttons_group)
                     bars = get_bars(min_heap.arr, unsorted_lst, SIDE_PAD, min(unsorted_lst), max(unsorted_lst))
 
                 # Controls min or max sorting order
@@ -131,7 +138,7 @@ def sort_display(images):
                     gs.ascending = True
 
             if event.type == pg.MOUSEBUTTONDOWN:
-                for button in buttons_group:
+                for button in sort_buttons_group:
                     if button.check_click():
                         if button.name == 'Sort':
                             gs.sort = True
@@ -140,7 +147,7 @@ def sort_display(images):
                             gs.stop = True
 
         if gs.stop and min_heap.size == 0:
-            draw(screen, buttons_group, bars)
+            draw(screen, sort_buttons_group, bars)
 
         elif gs.sort:
             pg.mixer.music.play(-1)
@@ -152,21 +159,26 @@ def sort_display(images):
         pg.display.update()
         clock.tick(60)
 
-def main():
-    global gs, buttons_group, menu_buttons_group
-    gs = GS()  # Initialize the game state
-    
-    # Initialize images
-    images = Images()
 
+# Initialization of globals
+gs = GS()
+menu_buttons_group = None
+sort_buttons_group = None
+images = Images()
+
+
+def main():
+    global gs, images, sort_buttons_group, menu_buttons_group
+
+    # Define menu buttons
     menu_buttons = gen_menu_buttons(images)
     menu_buttons_group = pg.sprite.Group(menu_buttons)
     
     menu_display(images)
     
-    # Initialize the buttons for sorting display
-    buttons = gen_buttons(images)
-    buttons_group = pg.sprite.Group(buttons)
+    # Define sort buttons
+    buttons = gen_sort_buttons(images)
+    sort_buttons_group = pg.sprite.Group(buttons)
     
     sort_display(images)
 
