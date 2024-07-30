@@ -42,16 +42,15 @@ def gen_buttons(images):
     buttons_lst = []
     sort_button = Button(screen, images, 'Sort', SORT[0], SORT[1], SCALE, ELEVATION)
     stop_button = Button(screen, images, 'Stop', STOP[0], STOP[1], SCALE, ELEVATION)
-    buttons_lst.append(sort_button)
-    buttons_lst.append(stop_button)
+    buttons_lst.extend(sort_button, stop_button)
     return buttons_lst
 
 def gen_menu_buttons(images):
     buttons_lst = []
-    heap_sort_button = Button(screen, images, 'Heap Sort', 500, 200, SCALE, ELEVATION)
-    merge_sort_button = Button(screen, images, 'Merge Sort', 500, 300, SCALE, ELEVATION)
-    asc_button = Button(screen, images, 'Ascending', 500, 400, SCALE, ELEVATION)
-    desc_button = Button(screen, images, 'Descending', 500, 500, SCALE, ELEVATION)
+    heap_sort_button = Button(screen, images, 'Heap Sort', HEAP_SORT[0], HEAP_SORT[1], SCALE, ELEVATION)
+    merge_sort_button = Button(screen, images, 'Merge Sort', MERGE_SORT[0], MERGE_SORT[1], SCALE, ELEVATION)
+    asc_button = Button(screen, images, 'Ascending', ASC[0], ASC[1], SCALE, ELEVATION)
+    desc_button = Button(screen, images, 'Descending', DESC[0], DESC[1], SCALE, ELEVATION)
     buttons_lst.extend([heap_sort_button, merge_sort_button, asc_button, desc_button])
     return buttons_lst
 

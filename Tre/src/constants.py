@@ -28,6 +28,14 @@ SORT_BEGIN = ((WINDOWSIZE[0]-434) / 2)
 SORT = (SORT_BEGIN, round(0.95 * WINDOWSIZE[1]))
 STOP = (SORT_BEGIN + 242, round(0.95 * WINDOWSIZE[1]))
 
+# ********** Edit to allow dynamic resizing relative to window size **********
+# This only works with a window of 1200, 800
+HEAP_SORT = (500, 200)
+MERGE_SORT = (500, 300)
+ASC = (500, 400)
+DESC = (500, 500)
+
+
 # Image Dictionary
 # Key is path, value is reference name
 IMAGE_DICT = {'../imgs/Blank.png': 'Blank'}
