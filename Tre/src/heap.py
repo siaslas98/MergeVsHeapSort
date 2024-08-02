@@ -1,74 +1,81 @@
-import sys
 import pygame as pg
-from bars import get_bars
-from draw import *
+import sys
 from constants import *
+from bars import get_bars_heapsort
+from draw import *
 
 
 class Heap:
     # Constructor
-    def __init__(self, screen, unsorted_arr, buttons_group, heap_type="min",  key=lambda x: x):
+    def __init__(self, screen, sort_info, compartor, heap_type="min"):
         self.screen = screen
-        self.unsorted_arr = unsorted_arr
+        self.sort_info = sort_info
+        self.unsorted_arr = sort_info.list
         self.arr = []
         self.sorted_arr = []
-        self.buttons_group = buttons_group
-        self.key = key
+        self.buttons_group = sort_info.sort_buttons_group
         self.heap_type = heap_type
         self.size = 0
-        self.min_val = min(unsorted_arr)
-        self.max_val = max(unsorted_arr)
+        self.comparator = compartor
+        self.min_val = min(self.unsorted_arr, key=self.comparator) if self.unsorted_arr else None
+        self.max_val = max(self.unsorted_arr, key=self.comparator) if self.unsorted_arr else None
 
-    def insert(self, x, gs):
+    def key(self, stock):
+        return self.comparator(stock)
+
+    def insert(self, x, sort_info):
         self.arr.append(x)
         self.unsorted_arr.pop()
         self.size += 1
-        self.heapify_up(self.size - 1, gs)  # Heapify up from the last element
+        self.heapify_up(self.size - 1, sort_info)  # Heapify up from the last element
 
-    def insert_unsorted(self, gs):
-        for i in reversed(self.unsorted_arr):
-            self.handle_events(gs)
+    def insert_unsorted(self, sort_info):
+        while self.unsorted_arr:
+            self.handle_events(sort_info)
+            if not sort_info.sort:
+                while not sort_info.sort:
+                    self.handle_events(sort_info)
 
-            if not gs.sort:
-                break
-            self.insert(i, gs)
+            self.insert(self.unsorted_arr[-1], sort_info)
 
     # Accesses the min or max element in the heap
     def get(self):
         return self.arr[0] if self.arr else None
 
     # Removes the min or max element in the heap
-    def extract(self, gs):
-        if gs.lst_sorted:
-            while gs.lst_sorted:
+    def extract(self, sort_info):
+        if sort_info.lst_sorted:
+            while sort_info.lst_sorted:
                 self.display(self.sorted_arr, self.unsorted_arr)
-                self.handle_events(gs)
-                if not gs.lst_sorted:
+                self.handle_events(sort_info)
+                if not sort_info.lst_sorted:
                     return
-        if not gs.sort:
+
+        if not sort_info.sort:
             return
 
         if not self.arr:
-            gs.lst_sorted = True
+            sort_info.lst_sorted = True
 
         root = self.arr[0]
         if self.size > 1:
             self.sorted_arr.append(self.arr[0])
             self.arr[0] = self.arr.pop()
             self.size -= 1
-            self.heapify_down(0, gs)
+            self.heapify_down(0, sort_info)
         else:
             self.arr.pop()
             self.size -= 1
 
         return root
 
-    def heapify_up(self, child, gs):
+    def heapify_up(self, child, sort_info):
         parent = (child - 1) // 2
         while child > 0:
-            self.handle_events(gs)
-            if not gs.sort:
-                return
+            self.handle_events(sort_info)
+            if not sort_info.sort:
+                while not sort_info.sort:
+                    self.handle_events(sort_info)
 
             if self.heap_type == "min":
                 if self.key(self.arr[child]) < self.key(self.arr[parent]):
@@ -86,12 +93,12 @@ class Heap:
             child = parent
             parent = (child - 1) // 2
 
-    def heapify_down(self, parent, gs):
+    def heapify_down(self, parent, sort_info):
         while True:
-            self.handle_events(gs)
-            if not gs.sort:
-                return
-
+            self.handle_events(sort_info)
+            if not sort_info.sort:
+                while not sort_info.sort:
+                    self.handle_events(sort_info)
             left = 2 * parent + 1
             right = 2 * parent + 2
             child = parent
@@ -116,34 +123,46 @@ class Heap:
             pg.time.delay(50)
             parent = child
 
-    def handle_events(self, gs):
+    def handle_events(self, sort_info):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
                 sys.exit()
-            if event.type == pg.MOUSEBUTTONDOWN:
-                for button in self.buttons_group:
-                    if button.check_click():
-                        if button.name == 'Sort' and gs.stop and not gs.sort:
-                            gs.sort = True
-                            gs.stop = False
-                        elif button.name == 'Stop' and gs.sort and not gs.stop:
-                            gs.stop = True
-                            gs.sort = False
 
-            if event.type == pg.KEYDOWN:
+            elif event.type == pg.KEYDOWN:
+                if event.key == pg.K_SPACE:
+                   sort_info.sort = not sort_info.sort
+                   print(f"Sort state changed to {sort_info.sort}")
+
                 if event.key == pg.K_r:  # Reset
-                    gs.sort = False
-                    gs.lst_sorted = False
-                    gs.stop = True
+                    sort_info.sort = False
+                    sort_info.lst_sorted = False
+                    print("Reset pressed, sort_info.sort:", sort_info.sort)
+
+            elif event.type == pg.MOUSEBUTTONDOWN:
+                for btn in self.buttons_group:
+                    if btn.update(FONT1, TEXT_COLOR1):
+                        if btn.name == 'Sort' and not sort_info.sort:
+                            sort_info.sort = True
+                            print("Sort button clicked to start sorting, sort_info.sort:", sort_info.sort)
+                        elif btn.name == 'Stop' and sort_info.sort:
+                            sort_info.sort = False
+                            print("Stop button clicked to stop sorting, sort_info.sort:", sort_info.sort)
 
     def display(self, sorted_lst, unsorted_lst, new_ele_idx=None):
         bar_width = (WINDOWSIZE[0] - TOTAL_SIDE_PAD) / (self.size + len(unsorted_lst))
         unsorted_start_x = SIDE_PAD + len(sorted_lst) * bar_width
 
-        bars = get_bars(sorted_lst, unsorted_lst, unsorted_start_x, self.min_val, self.max_val, new_ele_idx)
+        # Reverse the arrays if sorting in descending order
+        if not self.sort_info.ascending:
+            sorted_lst = sorted_lst[::-1]
+            unsorted_lst = unsorted_lst[::-1]
 
-        draw(self.screen, self.buttons_group, bars, new_ele_idx)
+        bars = get_bars_heapsort(sorted_lst, unsorted_lst, unsorted_start_x, self.min_val, self.max_val, self.sort_info.selected_attribute.lower(), new_ele_idx)
+
+        draw(self.screen, self.sort_info, bars, new_ele_idx)
+        vert_space = (WINDOWSIZE[1] - TOP_PADDING) - (WINDOWSIZE[1] - sorting_bottom)
+        pg.draw.line(self.screen, 'Orange', (unsorted_start_x, sorting_bottom), (unsorted_start_x, 5), 4)
         pg.display.update()
 
 

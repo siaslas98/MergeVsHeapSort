@@ -6,7 +6,7 @@ pg.init()
 WINDOWSIZE = (1200, 800)
 #WINDOWSIZE = (1800, 1000)
 
-# Padding
+# Padding for the sorting screen display
 TOTAL_SIDE_PAD = 100
 SIDE_PAD = round(TOTAL_SIDE_PAD / 2)
 TOP_PADDING = 100
@@ -22,18 +22,36 @@ UNSORTED = [(200, 200, 200), (128, 128, 128), (50, 50, 50)]
 # Fonts
 FONT1 = pg.font.SysFont('Arial Black', 50)
 FONT2 = pg.font.SysFont('Arial Black', 30)
+FONT3 = pg.font.SysFont('Arial Black', 18)
+FONT4 = pg.font.SysFont('Arial Black', 17)
+
+# This is for the input box on menu display
+DROPDOWN_OFFSET = 50
 
 # Button positions
 SORT_BEGIN = ((WINDOWSIZE[0]-434) / 2)
-SORT = (SORT_BEGIN, round(0.95 * WINDOWSIZE[1]))
-STOP = (SORT_BEGIN + 242, round(0.95 * WINDOWSIZE[1]))
+SORT = (SORT_BEGIN, round(0.95 * WINDOWSIZE[1]))  # This is currently unused
+STOP = (SORT_BEGIN + 242, round(0.95 * WINDOWSIZE[1])) # This is currently unused
 
-# ********** Edit to allow dynamic resizing relative to window size **********
-# This only works with a window of 1200, 800
-HEAP_SORT = (500, 200)
-MERGE_SORT = (500, 300)
-ASC = (500, 400)
-DESC = (500, 500)
+SORT_BUTTON = (263, 200)
+ORDER_BUTTON = (505, 200)
+ATTRIBUTE_BUTTON = (747, 200)
+
+# Sort type positions
+HEAP_SORT = (SORT_BUTTON[0], SORT_BUTTON[1] + DROPDOWN_OFFSET)
+TIM_SORT = (SORT_BUTTON[0], SORT_BUTTON[1] + 2 * DROPDOWN_OFFSET)
+
+# Order positions
+ASC = (ORDER_BUTTON[0], ORDER_BUTTON[1] + DROPDOWN_OFFSET)
+DESC = (ORDER_BUTTON[0], ORDER_BUTTON[1] + 2 * DROPDOWN_OFFSET)
+
+# Attribute positions
+OPEN = (ATTRIBUTE_BUTTON[0], ATTRIBUTE_BUTTON[1] + DROPDOWN_OFFSET)
+HIGH = (ATTRIBUTE_BUTTON[0], ATTRIBUTE_BUTTON[1] + 2 * DROPDOWN_OFFSET)
+LOW = (ATTRIBUTE_BUTTON[0], ATTRIBUTE_BUTTON[1] + 3 * DROPDOWN_OFFSET)
+CLOSE = (ATTRIBUTE_BUTTON[0], ATTRIBUTE_BUTTON[1] + 4 * DROPDOWN_OFFSET)
+VOLUME = (ATTRIBUTE_BUTTON[0], ATTRIBUTE_BUTTON[1] + 5 * DROPDOWN_OFFSET)
+OPENINT = (ATTRIBUTE_BUTTON[0], ATTRIBUTE_BUTTON[1] + 6 * DROPDOWN_OFFSET)
 
 
 # Image Dictionary
@@ -49,6 +67,7 @@ TITLE_TO_TIPS_OFFSET = 20
 
 sorting_bottom = int(WINDOWSIZE[1] * 0.85)
 
+# This is unused and can be removed
 basic_controls = FONT2.render("R - Reset | SPACE - Start Sorting | A - Ascending | D - Descending", 1, TEXT_COLOR1)
 controls_x = WINDOWSIZE[0] / 2 - basic_controls.get_width()/2
 sort_controls = FONT2.render("H - Heap Sort | M - Merge Sort", 1, TEXT_COLOR1)
@@ -60,7 +79,35 @@ Menu_tips = FONT2.render("Click on the buttons to select the sorting algorithm a
 controls_menu_tips = controls_menu + Menu_Title.get_height() + TITLE_TO_TIPS_OFFSET
 
 
-# Sorting Range
-n = 80
-min_val = 50
-max_val = 150
+# Sorting
+# n = 31 for trees
+n = 100  # for bars
+
+# Box Attributes + Node Attributes(Ignore this)
+STARTING_X = 50
+STARTING_Y = 50
+BOX_WIDTH = (WINDOWSIZE[0] - 100) / 31
+BOX_HEIGHT = 40
+RADIUS = 25
+BOX_TOP_PAD = 50
+BOX_BOTTOM_PAD = 20
+ROOT_Y_POS = BOX_TOP_PAD + BOX_BOTTOM_PAD + BOX_HEIGHT + RADIUS
+VERT_SPACING = 150
+
+# Input Box
+COLOR_INACTIVE = pg.Color('lightskyblue3')
+COLOR_ACTIVE = pg.Color('dodgerblue2')
+
+# Tim Sort
+MIN_RUN_SIZE = 32
+
+RUN_COLORS = [
+    (255, 0, 0),      # Red
+    (0, 255, 0),      # Green
+    (0, 0, 255),      # Blue
+    (255, 255, 0),    # Yellow
+    (255, 165, 0),    # Orange
+    (128, 0, 128),    # Purple
+    (0, 255, 255),    # Cyan
+    (255, 192, 203),  # Pink
+]

@@ -1,186 +1,271 @@
+import pygame as pg
+from constants import *
 import sys
 import random
-import pygame as pg
+from load_data import load_data
 from images import *
 from button import *
-from constants import *
-from heap import Heap
-import merge_sort
-from sorting import *
 from bars import *
+from box import *
+from node import Node
+from heap import Heap
+from sorting import *
 from draw import *
+from calculations import *
+from stock import *
 
-pg.init()
-pg.mixer.init()
-pg.mixer.music.load("../22.mp3")
-screen = pg.display.set_mode(WINDOWSIZE)
-pg.display.set_caption("Sorting Algorithm Visualizer")
-clock = pg.time.Clock()  # For controlling framerate
+''' Please do not change any of the get_bars functions, or any of the already defined draw functions, as they can
+affect alot of the code '''
 
 
-class GS:
-    sort = False
-    stop = True
-    click = False
-    ascending = True
-    lst_sorted = False
-    selected_sort = None
-    selected_order = None
+class SortInfo:
+    def __init__(self):
+        self.sort = False
+        self.click = False
+        self.ascending = True
+        self.lst_sorted = False
+        self.selected_sort = None
+        self.selected_order = None
+        self.selected_attribute = None
+        self.date = ""
+        self.list = []  # List  of stock data objects to perform sorting on
+        self.images = Images()
+        self.menu_buttons_group = pg.sprite.Group()
+        self.sort_buttons_group = pg.sprite.Group()
+        self.order_buttons_group = pg.sprite.Group()
+        self.attribute_buttons_group = pg.sprite.Group()
+        self.input_box_group = pg.sprite.Group()
+        self.boxes = pg.sprite.Group()  # This is for testing a tree based representation
+        self.nodes = pg.sprite.Group()  # This is for testing a tree based representation
+        self.heap = None
+        self.bars = None
+        self.sort_dropdown_expanded = False
+        self.order_dropdown_expanded = False
+        self.attribute_dropdown_expanded = False
+
+        # Initialize the input box got menu_display screen
+        self.input_box = InputBox(120, 35)
+        self.input_box_group.add(self.input_box)
 
 
-def disp_message(text, font, color, x, y):
-    message = font.render(text, True, color)
-    message_rect = message.get_rect(center=(x, y))
-    screen.blit(message, message_rect)
+def initialize_pygame():
+    pg.init()
+    pg.mixer.init()
+    pg.mixer.music.load("../22.mp3")
+    screen = pg.display.set_mode(WINDOWSIZE)
+    pg.display.set_caption("Sorting Algorithm Visualizer")
+    return screen
 
 
-def gen_starting_list():
-    lst = []
-    for i in range(1, n + 1):
-        num = random.randint(min_val, max_val)
-        lst.append(num)
-    return lst
+def gen_starting_list(sort_info):
+    if sort_info.date and sort_info.selected_attribute:
+        stock_data = load_data(sort_info.date, '../Stocks')  # Load data with date filtering
+        sort_info.list = stock_data[:n]
 
 
-def gen_sort_buttons(images):
-    buttons_lst = []
-    sort_button = Button(screen, images, 'Sort', SORT[0], SORT[1], SCALE, ELEVATION)
-    stop_button = Button(screen, images, 'Stop', STOP[0], STOP[1], SCALE, ELEVATION)
-    buttons_lst.extend([sort_button, stop_button])
-    return buttons_lst
+def gen_menu_buttons(screen, sort_info):
+    main_buttons = [
+        ('Sort Type', SORT_BUTTON),
+        ('Order', ORDER_BUTTON),
+        ('Attributes', ATTRIBUTE_BUTTON),
+    ]
+    for name, pos in main_buttons:
+        button = Button(screen, sort_info, name, pos[0], pos[1], SCALE, ELEVATION)
+        sort_info.menu_buttons_group.add(button)
+
+    # **********************
+
+    sort_type_buttons = [
+        ('Heap Sort', HEAP_SORT),
+        ('Tim Sort', TIM_SORT)
+    ]
+
+    for name, pos in sort_type_buttons:
+        button = Button(screen, sort_info, name, pos[0], pos[1], SCALE, ELEVATION)
+        sort_info.sort_buttons_group.add(button)
 
 
-def gen_menu_buttons(images):
-    buttons_lst = []
-    heap_sort_button = Button(screen, images, 'Heap Sort', HEAP_SORT[0], HEAP_SORT[1], SCALE, ELEVATION)
-    merge_sort_button = Button(screen, images, 'Merge Sort', MERGE_SORT[0], MERGE_SORT[1], SCALE, ELEVATION)
-    asc_button = Button(screen, images, 'Ascending', ASC[0], ASC[1], SCALE, ELEVATION)
-    desc_button = Button(screen, images, 'Descending', DESC[0], DESC[1], SCALE, ELEVATION)
-    buttons_lst.extend([heap_sort_button, merge_sort_button, asc_button, desc_button])
-    return buttons_lst
+    # **********************
+
+    order_buttons = [
+        ('Ascending', ASC),
+        ('Descending', DESC)
+    ]
+
+    for name, pos in order_buttons:
+        button = Button(screen, sort_info, name, pos[0], pos[1], SCALE, ELEVATION)
+        sort_info.order_buttons_group.add(button)
+
+    # **********************
+
+    attribute_buttons = [
+        ('Open', OPEN),
+        ('High', HIGH),
+        ('Low', LOW),
+        ('Close', CLOSE),
+        ('Volume', VOLUME),
+        ('OpenInt', OPENINT)
+    ]
+
+    for name, pos in attribute_buttons:
+        button = Button(screen, sort_info, name, pos[0], pos[1], SCALE, ELEVATION)
+        sort_info.attribute_buttons_group.add(button)
 
 
-def menu_display():
-    global gs, images
-
+def menu_display(screen, sort_info, clock):
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
                 sys.exit()
+
+            sort_info.input_box.handle_event(event, sort_info)  # Input box
+
             # If mouse inside borders of button and pressed
             if event.type == pg.MOUSEBUTTONDOWN:
-                for button in menu_buttons_group:
-                    if button.check_click():
-                        if button.name == 'Heap Sort':
-                            gs.selected_sort = 'Heap Sort'
-                            # Make sure only the Heap Sort button is pressed
-                            for btn in menu_buttons_group:
-                                if btn.name != 'Heap Sort':
-                                    btn.pressed = False
-                        elif button.name == 'Merge Sort':
-                            gs.selected_sort = 'Merge Sort'
-                            for btn in menu_buttons_group:
-                                if btn.name != 'Merge Sort':
-                                    btn.pressed = False
-                        elif button.name == 'Ascending':
-                            gs.selected_order = 'Ascending'
-                            for btn in menu_buttons_group:
-                                if btn.name != 'Ascending':
-                                    btn.pressed = False
-                        elif button.name == 'Descending':
-                            gs.selected_order = 'Descending'
-                            for btn in menu_buttons_group:
-                                if btn.name != 'Descending':
-                                    btn.pressed = False
+                mouse_pos = event.pos
 
-            if gs.selected_sort and gs.selected_order:
-                return  # Exit the menu when both sort and order are selected
+                for btn in sort_info.menu_buttons_group:
+                    if btn.rect.collidepoint(mouse_pos) and btn.update(FONT2, TEXT_COLOR1):
+                        if btn.name == 'Sort Type':
+                            sort_info.sort_dropdown_expanded = not sort_info.sort_dropdown_expanded
+                            sort_info.order_dropdown_expanded = False
+                            sort_info.attribute_dropdown_expanded = False
+                        elif btn.name == 'Order':
+                            sort_info.order_dropdown_expanded = not sort_info.order_dropdown_expanded
+                            sort_info.sort_dropdown_expanded = False
+                            sort_info.attribute_dropdown_expanded = False
+                        elif btn.name == 'Attributes':
+                            sort_info.attribute_dropdown_expanded = not sort_info.attribute_dropdown_expanded
+                            sort_info.sort_dropdown_expanded = False
+                            sort_info.order_dropdown_expanded = False
 
-        draw(screen, menu_buttons_group)  # Use the draw function from draw.py
+                if sort_info.sort_dropdown_expanded:
+                    for btn in sort_info.sort_buttons_group:
+                        if btn.rect.collidepoint(mouse_pos):
+                            sort_info.selected_sort = btn.name
+                            sort_info.sort_dropdown_expanded = False
+
+                if sort_info.order_dropdown_expanded:
+                    for btn in sort_info.order_buttons_group:
+                        if btn.rect.collidepoint(mouse_pos):
+                            sort_info.selected_order = btn.name
+                            sort_info.ascending = (btn.name == 'Ascending')
+                            sort_info.order_dropdown_expanded = False
+
+                if sort_info.attribute_dropdown_expanded:
+                    for btn in sort_info.attribute_buttons_group:
+                        if btn.rect.collidepoint(mouse_pos):
+                            sort_info.selected_attribute = btn.name
+                            sort_info.attribute_dropdown_expanded = False
+
+        if sort_info.selected_sort and sort_info.selected_order and sort_info.selected_attribute\
+                and sort_info.date:
+            return  # Exit the menu when both sort and order are selected
+
+        draw(screen, sort_info)  # Updated draw call
         pg.display.update()
         clock.tick(60)
 
 
-def sort_display():
-    global gs, images
+def bar_sort_display(screen, sort_info, clock):
+    comparator = Stock.get_comparator(sort_info.selected_attribute.lower(), sort_info.ascending)
     # Adjust this based on selected_sort and selected_order
-    if gs.selected_sort == 'Heap Sort':
-        sort_function = heap_sort
-    elif gs.selected_sort == 'Merge Sort':
-        sort_function = merge_sort
-    else:
-        raise ValueError("No valid sorting algorithm selected")
-    
-    unsorted_lst = gen_starting_list()
-    min_heap = Heap(screen, unsorted_lst, sort_buttons_group)  # Instantiate heap
-    bars = get_bars(min_heap.arr, unsorted_lst, SIDE_PAD, min(unsorted_lst), max(unsorted_lst))  # Generate Bar rectangles for drawing
-    
+    sort_function = heap_sort if sort_info.selected_sort == 'Heap Sort' else timsort
+
+    if sort_info.selected_sort == 'Heap Sort':
+        sort_info.heap = Heap(screen, sort_info, comparator)
+        sort_info.bars = get_bars_heapsort(
+            sort_info.heap.arr,
+            sort_info.list,
+            SIDE_PAD,
+            min(sort_info.list, key=comparator),
+            max(sort_info.list, key=comparator),
+            sort_info.selected_attribute.lower()
+        )
+
+    elif sort_info.selected_sort == "Tim Sort":
+        # Prepare for Tim Sort
+        sort_info.bars = get_bars_timsort(
+            [],
+            sort_info.list,
+            SIDE_PAD,
+            min(sort_info.list, key=comparator),
+            max(sort_info.list, key=comparator),
+            sort_info.selected_attribute.lower(),
+            RUN_COLORS
+        )
+
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 sys.exit()
 
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_SPACE and gs.stop:
-                    gs.stop = False
-                    gs.sort = True
+                # Toggles sort or stop
+                if event.key == pg.K_SPACE:
+                    sort_info.sort = not sort_info.sort
 
-                if event.key == pg.K_r:  # Reset
-                    gs.sort = False
-                    gs.stop = True
-                    unsorted_lst = gen_starting_list()
-                    min_heap = Heap(screen, unsorted_lst, sort_buttons_group)
-                    bars = get_bars(min_heap.arr, unsorted_lst, SIDE_PAD, min(unsorted_lst), max(unsorted_lst))
+                # Controls reset
+                elif event.key == pg.K_r:
+                    sort_info.sort = False
+                    gen_starting_list(sort_info)
+                    comparator = Stock.get_comparator(sort_info.selected_attribute.lower(), sort_info.ascending)
+                    if sort_info.selected_sort == 'Heap Sort':
+                        sort_info.heap = Heap(screen, sort_info, comparator)
+                        sort_info.bars = get_bars_heapsort(sort_info.heap.arr, sort_info.list, SIDE_PAD, min(sort_info.list, key=comparator),  max(sort_info.list, key=comparator), sort_info.selected_attribute.lower())
+                    elif sort_info.selected_sort == 'Tim Sort':
+                        sort_info.bars = get_bars_timsort(sort_info.list, [], SIDE_PAD, min(sort_info.list, key=comparator), max(sort_info.list, key=comparator), sort_info.selected_attribute.lower(), RUN_COLORS)
 
                 # Controls min or max sorting order
-                if event.key == pg.K_a and not gs.sort and not gs.ascending:
-                    gs.ascending = True
+                if event.key == pg.K_a and not sort_info.sort and not sort_info.ascending:
+                    sort_info.ascending = True
+                    comparator = Stock.get_comparator(sort_info.selected_attribute.lower(), sort_info.ascending)
+                elif event.key == pg.K_d and not sort_info.sort and sort_info.ascending:
+                    sort_info.ascending = False
+                    comparator = Stock.get_comparator(sort_info.selected_attribute.lower(), sort_info.ascending)
 
+            # This is currently unused
             if event.type == pg.MOUSEBUTTONDOWN:
-                for button in sort_buttons_group:
-                    if button.check_click():
+                for button in sort_info.sort_buttons_group:
+                    if button.update(FONT1, TEXT_COLOR1):
                         if button.name == 'Sort':
-                            gs.sort = True
-                            gs.stop = False
-                        if button.name == 'Stop':
-                            gs.stop = True
+                            sort_info.sort = True
+                        elif button.name == 'Stop':
+                            sort_info.sort = False
 
-        if gs.stop and min_heap.size == 0:
-            draw(screen, sort_buttons_group, bars)
+        if not sort_info.sort:
+            draw(screen, sort_info, sort_info.bars)  # Initial state of the bars
 
-        elif gs.sort:
-            pg.mixer.music.play(-1)
-            min_heap.insert_unsorted(gs)
-            sort_function(min_heap, gs)
-            gs.sort = False
-            pg.mixer.music.stop()
+        elif sort_info.sort:
+            if sort_info.selected_sort == 'Heap Sort':
+                # pg.mixer.music.play(-1)  # Play music
+                sort_info.heap.insert_unsorted(sort_info)  # Part 1 - Insert elements into heap
+                sort_function(sort_info.heap, sort_info)  # Part 2 - Sort elements
+                sort_info.bars = get_bars_heapsort(sort_info.list, [], SIDE_PAD, min(sort_info.list, key=comparator), max(sort_info.list, key=comparator), sort_info.selected_attribute.lower())
+                print("back in display")
+                # pg.mixer.music.stop()
+            elif sort_info.selected_sort == 'Tim Sort':
+                sort_function(sort_info.list, comparator, sort_info, screen)
+                sort_info.bars = get_bars_timsort([], sort_info.list, SIDE_PAD, min(sort_info.list, key=comparator), max(sort_info.list, key=comparator), sort_info.selected_attribute.lower(), RUN_COLORS)
 
         pg.display.update()
         clock.tick(60)
 
 
-# Initialization of globals
-gs = GS()
-menu_buttons_group = None
-sort_buttons_group = None
-images = Images()
+def initialize_buttons(screen, sort_info):
+    gen_menu_buttons(screen, sort_info)
 
 
 def main():
-    global gs, images, sort_buttons_group, menu_buttons_group
+    screen = initialize_pygame()
+    clock = pg.time.Clock()
+    sort_info = SortInfo()
+    initialize_buttons(screen, sort_info)
+    menu_display(screen, sort_info, clock)
+    gen_starting_list(sort_info)
+    bar_sort_display(screen, sort_info, clock)
 
-    # Define menu buttons
-    menu_buttons = gen_menu_buttons(images)
-    menu_buttons_group = pg.sprite.Group(menu_buttons)
-    
-    menu_display()
-    
-    # Define sort buttons
-    buttons = gen_sort_buttons(images)
-    sort_buttons_group = pg.sprite.Group(buttons)
-    
-    sort_display()
 
 if __name__ == "__main__":
     main()

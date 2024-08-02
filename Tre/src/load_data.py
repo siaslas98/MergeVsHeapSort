@@ -6,6 +6,8 @@ from stock import Stock
 # Set up logging
 logging.basicConfig(filename='load_data.log', level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
+
+
 def load_file(file_path, selected_date):
     """Load a file and filter by the selected date"""
     try:
@@ -26,9 +28,11 @@ def load_file(file_path, selected_date):
         logging.info(f"Error loading {file_path}: {e}")
         return None
 
+
 def get_file_paths(directory, extension=".csv"):
     """Return a list of file paths with the given extension in the specified directory."""
     return [os.path.join(directory, f) for f in os.listdir(directory) if f.endswith(extension)]
+
 
 def load_data(date, directory):
     """Load data for the given date from files in the specified directory."""
