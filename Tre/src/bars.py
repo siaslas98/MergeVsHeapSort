@@ -1,7 +1,13 @@
 import pygame as pg
-from constants import *
-from heap import *
 
+# Constants
+WINDOWSIZE = (800, 600)
+TOTAL_SIDE_PAD = 100
+TOP_PADDING = 100
+sorting_bottom = 550
+BG_COLOR = (30, 30, 30)
+BAR_COLOR = (100, 200, 200)
+SORTED_BAR_COLOR = (100, 200, 100)
 
 def calc_parameters(total_len):
     parameters = {
@@ -13,9 +19,8 @@ def calc_parameters(total_len):
     }
     return parameters
 
-
-def get_bars(sorted_lst, unsorted_lst, unsorted_start_x, u_min_val, u_max_val, new_element_idx=None):
-    if not sorted_lst and not unsorted_lst:  # Ensure the array is not empty
+def get_bars(sorted_lst, unsorted_lst, unsorted_start_x, u_min_val, u_max_val):
+    if not sorted_lst and not unsorted_lst:
         return []
     bar_list = []
 
@@ -26,22 +31,25 @@ def get_bars(sorted_lst, unsorted_lst, unsorted_start_x, u_min_val, u_max_val, n
         diff = 1
     bar_unit = p['vert_space'] / diff
 
-    length = len(sorted_lst)
-    for i in range(length):
-        n_height = (sorted_lst[i] - u_min_val) / diff  # Normalized Height
-        s_height = n_height * (p['vert_space'] - 10)  # Scaled Height
+    for i, (name, value) in enumerate(sorted_lst):
+        n_height = (value - u_min_val) / diff
+        s_height = n_height * (p['vert_space'] - 10)
         rect = pg.Rect(p['side_pad'] + i * p['bar_width'], 0, p['bar_width'], s_height)
         rect.bottom = sorting_bottom
-        bar_list.append(rect)
+        bar_list.append((rect, SORTED_BAR_COLOR))
 
-    length = len(unsorted_lst)
-    for i in range(length):
-        if unsorted_lst[i] not in sorted_lst:
-            n_height = (unsorted_lst[i] - u_min_val) / diff
+    for i, (name, value) in enumerate(unsorted_lst):
+        if (name, value) not in sorted_lst:
+            n_height = (value - u_min_val) / diff
             s_height = n_height * (p['vert_space'] - 10)
             rect = pg.Rect(unsorted_start_x + i * p['bar_width'], 0, p['bar_width'], s_height)
             rect.bottom = sorting_bottom
-            bar_list.append(rect)
+            bar_list.append((rect, BAR_COLOR))
 
     return bar_list
 
+def draw_bars(screen, bars):
+    screen.fill(BG_COLOR)
+    for rect, color in bars:
+        pg.draw.rect(screen, color, rect)
+    pg.display.flip()

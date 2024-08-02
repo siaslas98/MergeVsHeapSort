@@ -17,12 +17,13 @@ from Text_Input import Text_Input_Box
 pg.init()
 pg.mixer.init()
 pg.mixer.music.load("Audio/22.mp3")
-# setting the screen 
+
+# Setting the screen
 screen = pg.display.set_mode(WINDOWSIZE)
 pg.display.set_caption("Stock Statistics + Sorting Algorithm Visualizer")
 clock = pg.time.Clock()  # For controlling framerate
 
-# initializing the timer
+# Initializing the timer
 timer = Timer()
 
 class GS:
@@ -31,7 +32,7 @@ class GS:
     selected_order = None
     show_visuals = None
     visual = None
-    date = (None,None)
+    date = (None, None)
 
 def disp_message(text, font, color, x, y):
     message = font.render(text, True, color)
@@ -41,6 +42,7 @@ def disp_message(text, font, color, x, y):
 def gen_button_stats(images):
     buttons_lst = []
     stats_visible = Button(screen, images, 'Statistics', 200, 200, SCALE, ELEVATION)
+    buttons_lst.append(stats_visible)
     return buttons_lst
 
 def gen_visual_buttons(images):
@@ -64,23 +66,23 @@ def gen_menu_buttons_part1(images):
 
 def gen_menu_buttons_part2(images):
     buttons_lst = []
-    low_button = Button(screen, images, 'Minimum', low_button_position[0], low_button_position[1] , SCALE, ELEVATION)
+    low_button = Button(screen, images, 'Minimum', low_button_position[0], low_button_position[1], SCALE, ELEVATION)
     high_button = Button(screen, images, 'Maximum', high_button_position[0], high_button_position[1], SCALE, ELEVATION)
-    buttons_lst.extend([ high_button, low_button])
+    buttons_lst.extend([high_button, low_button])
     return buttons_lst
 
 def gen_menu_buttons_part3(images):
     buttons_lst = []
     yes_button = Button(screen, images, 'Yes', high_button_position[0], high_button_position[1], SCALE, ELEVATION)
     no_button = Button(screen, images, 'No', low_button_position[0], low_button_position[1], SCALE, ELEVATION)
-    buttons_lst.extend([ no_button, yes_button])
+    buttons_lst.extend([no_button, yes_button])
     return buttons_lst
 
 def gen_menu_buttons_part4(images):
     buttons_lst = []
     timsort_button = Button(screen, images, 'Timsort', high_button_position[0], high_button_position[1], SCALE, ELEVATION)
     heap_sort_button = Button(screen, images, 'Heap Sort', low_button_position[0], low_button_position[1], SCALE, ELEVATION)
-    buttons_lst.extend([ timsort_button, heap_sort_button])
+    buttons_lst.extend([timsort_button, heap_sort_button])
     return buttons_lst
 
 def is_sorted(lst, ascending=True):
@@ -154,7 +156,7 @@ def menu_display_1(images):
                             gs.selected_option = 'Price Change'
                             return
                         elif button.name == '52-Week-Low':
-                            gs.selected_option = '52-Week'
+                            gs.selected_option = '52-Week-Low'
                             return
                         elif button.name == 'Market Cap':
                             gs.selected_option = 'Market Cap'
@@ -232,7 +234,7 @@ def menu_display_4(images):
                 for button in menu_buttons_part4_group:
                     if button.check_if_clicked():
                         if button.name == 'Timsort':
-                            gs.visual= 'Timsort'
+                            gs.visual = 'Timsort'
                             return
                         elif button.name == 'Heap Sort':
                             gs.visual = 'Heap Sort'
@@ -345,7 +347,9 @@ def sort_display(images):
     elif gs.selected_order == 'Minimum':
         heap = Heap(screen, unsorted_lst, visual_buttons_group, 'min')
 
-    bars = get_bars(heap.arr, unsorted_lst, SIDE_PAD, min(unsorted_lst), max(unsorted_lst))  # Generate Bar rectangles for drawing
+    extremes = heap.get_heap_extremes()
+
+    bars = get_bars(extremes, unsorted_lst, SIDE_PAD, min(unsorted_lst, key=lambda x: x[1]), max(unsorted_lst, key=lambda x: x[1]))  # Generate Bar rectangles for drawing
     
     Sorting_Finished = False
 
@@ -394,18 +398,18 @@ def sort_display(images):
                             Sorting = False  
                             # Exit the sorting loop
         
-        if Sorting_Finished == False and sorting_start == True:
-            pg.mixer.music.play(-1)
-            heap.insert_unsorted(gs)
-            sort_function(heap, gs)
-            draw(screen, visual_buttons_group, bars)
-            # Check if the list is sorted in the desired order
-            if is_sorted(min_heap.arr, gs.ascending):
-                draw_buttons(screen, stats_group)
-            pg.mixer.music.stop()
+    if Sorting_Finished == False and sorting_start == True:
+        pg.mixer.music.play(-1)
+        heap.insert_unsorted(gs)
+        sort_function(heap, gs)
+        draw(screen, visual_buttons_group, bars)
+        # Check if the list is sorted in the desired order
+        if is_sorted(min_heap.arr, gs.ascending):
+            draw_buttons(screen, stats_group)
+        pg.mixer.music.stop()
 
-        pg.display.update()
-        clock.tick(60)
+    pg.display.update()
+    clock.tick(60)
 
 
 def main():
