@@ -14,7 +14,8 @@ class Button(pg.sprite.Sprite):
         self.dynamic_elevation = elevation
 
         # Background
-        self.bg_surf = images.get_image('Blank')
+        self.bg_surf = images.get_image('Buttons')
+        self.bg_surf = pg.transform.scale(self.bg_surf, scale)  # Scale the image
         self.image = self.bg_surf  # Assign to self.image for compatibility with pygame.sprite.Sprite
         self.rect = self.bg_surf.get_rect(topleft=(self.x_pos, self.y_pos))  # Assign to self.rect for compatibility
 
@@ -25,28 +26,20 @@ class Button(pg.sprite.Sprite):
         self.bottom_rect.y += self.dynamic_elevation
 
         # Text
-        self.text_color = (255, 255, 255)  # White color
-        self.text_surf1 = c.FONT2.render(name, True, self.text_color)
-        self.text_surf2 = c.FONT2.render(name, True, self.text_color)
-        self.text_surf_ele = c.FONT2.render(name, True, self.text_color)
-        self.text_rect1 = self.text_surf1.get_rect(center=self.top_rect.center)
-        self.text_rect2 = self.text_surf2.get_rect(center=self.top_rect.center)
-        self.text_rect_ele = self.text_surf_ele.get_rect(center=self.top_rect_elevated.center)
+        self.text_color = c.Colors.get_color('black')  # black color
+        self.text_surf1 = c.Button_Font.render(name, True, self.text_color)
+        self.text_surf2 = c.Button_Font.render(name, True, self.text_color)
+        self.text_surf_ele = c.Button_Font.render(name, True, self.text_color)
 
-    def check_click(self):
-        mouse_pos = pg.mouse.get_pos()
-        if self.top_rect.collidepoint(mouse_pos):
-            if pg.mouse.get_pressed()[0]:
-                self.pressed = True
-                self.dynamic_elevation = 0
-            else:
-                if self.pressed:
-                    self.dynamic_elevation = self.elevation
-                    self.pressed = False
-        else:
-            self.dynamic_elevation = self.elevation
+        # Center the text within the button
 
-        return self.pressed
+        self.text_rect1 = self.text_surf1.get_rect(center = (self.rect.center[0],(self.rect.center[1] - 10)))
+        self.text_rect2 = self.text_surf2.get_rect(center=self.rect.center)
+        self.text_rect_ele = self.text_surf_ele.get_rect(center= ((self.top_rect_elevated.center),))
+
+
+    def check_if_clicked(self):
+        return self.rect.collidepoint(pg.mouse.get_pos())
 
     def draw_button_background(self):
         if self.pressed:
@@ -56,16 +49,9 @@ class Button(pg.sprite.Sprite):
             self.screen.blit(self.bg_surf, self.top_rect_elevated)
 
     def draw_text(self, font, color):
-        mouse_pos = pg.mouse.get_pos()
-        if not self.top_rect.collidepoint(mouse_pos):
-            self.screen.blit(self.text_surf1, self.text_rect1)
-        else:
-            if self.pressed:
-                self.screen.blit(self.text_surf_ele, self.text_rect_ele)
-            else:
-                self.screen.blit(self.text_surf2, self.text_rect2)
-
+        self.screen.blit(self.text_surf1, self.text_rect1)
+        
     def update(self, font, color):
         self.draw_button_background()
         self.draw_text(font, color)
-        self.check_click()
+        self.check_if_clicked()
