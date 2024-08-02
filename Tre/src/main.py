@@ -259,44 +259,84 @@ def sort_display(images):
     sorting_start = False
 
     gs.date = ('2023-10-01', '2023-10-02')
+
+    nasdaq_symbols = [
+        "AAPL", "GOOGL", "MSFT", "AMZN", "FB", "NVDA", "TSLA", "BRK-B", "JPM", "UNH",
+        "V", "JNJ", "WMT", "PG", "XOM", "CVX", "BAC", "DIS", "HD", "MA",
+        "KO", "PEP", "CRM", "INTC", "ADBE", "CSCO", "NFLX", "COST", "CMCSA", "TXN",
+        "PYPL", "PEP", "MCD", "NKE", "MCD", "UNP", "UPS", "CAT", "IBM", "ORCL",
+        "CRM", "QCOM", "AMD", "TXN", "INTU", "ADP", "LOW", "SBUX", "DHR", "HON",
+        "BA", "LMT", "RTX", "UNH", "CVS", "MRK", "PFE", "ABT", "LLY", "GILD",
+        "AMGN", "TMO", "AZN", "NVO", "BMY", "MRNA", "REGN", "ILMN", "CELG", "BIIB",
+        "VRTX", "INCY", "SGEN", "ALXN", "REGN", "ANTM", "HUM", "Cigna", "AET", "DVA",
+        "DGX", "BDX", "SYK", "EW", "CI", "TGT", "TJX", "DLTR", "DG", "WBA",
+        "AAPL", "GOOGL", "MSFT", "AMZN", "FB", "NVDA", "TSLA", "BRK-B", "JPM", "UNH",
+        "V", "JNJ", "WMT", "PG", "XOM", "CVX", "BAC", "DIS", "HD", "MA",
+        "KO", "PEP", "CRM", "INTC", "ADBE", "CSCO", "NFLX", "COST", "CMCSA", "TXN",
+        "PYPL", "PEP", "MCD", "NKE", "MCD", "UNP", "UPS", "CAT", "IBM", "ORCL",
+        "CRM", "QCOM", "AMD", "TXN", "INTU", "ADP", "LOW", "SBUX", "DHR", "HON",
+        "BA", "LMT", "RTX", "UNH", "CVS", "MRK", "PFE", "ABT", "LLY", "GILD",
+        "AMGN", "TMO", "AZN", "NVO", "BMY", "MRNA", "REGN", "ILMN", "CELG", "BIIB",
+        "VRTX", "INCY", "SGEN", "ALXN", "REGN", "ANTM", "HUM", "Cigna", "AET", "DVA",
+        "DGX", "BDX", "SYK", "EW", "CI", "TGT", "TJX", "DLTR", "DG", "WBA",
+        "AAPL", "GOOGL", "MSFT", "AMZN", "FB", "NVDA", "TSLA", "BRK-B", "JPM", "UNH",
+        "V", "JNJ", "WMT", "PG", "XOM", "CVX", "BAC", "DIS", "HD", "MA",
+        "KO", "PEP", "CRM", "INTC", "ADBE", "CSCO", "NFLX", "COST", "CMCSA", "TXN",
+        "PYPL", "PEP", "MCD", "NKE", "MCD", "UNP", "UPS", "CAT", "IBM", "ORCL",
+        "CRM", "QCOM", "AMD", "TXN", "INTU", "ADP", "LOW", "SBUX", "DHR", "HON",
+        "BA", "LMT", "RTX", "UNH", "CVS", "MRK", "PFE", "ABT", "LLY", "GILD",
+        "AMGN", "TMO", "AZN", "NVO", "BMY", "MRNA", "REGN", "ILMN", "CELG", "BIIB",
+        "VRTX", "INCY", "SGEN", "ALXN", "REGN", "ANTM", "HUM", "Cigna", "AET", "DVA",
+        "DGX", "BDX", "SYK", "EW", "CI", "TGT", "TJX", "DLTR", "DG", "WBA"
+        ]
+    index = 0
     
     # Generate the two Stocks
-    Stock_1 = Stocks()
-    Stock_1.Generate_Stock_for_day(n,gs.date[0])
-    Stock_2 = Stocks()
-    Stock_2.Generate_Stock_for_day(n,gs.date[1])
+    day1 = []
+    day2 = []
+
+    for symbol in nasdaq_symbols:
+        price = random.uniform(min_range, max_range)
+        price2 = random.uniform(min_range, max_range)
+        week_high = random.uniform(price, max_range)
+        week_high2 = random.uniform(min_range, price)
+        week_low = random.uniform(min_range, price)
+        week_low2 = random.uniform(price, max_range)
+        market_cap = random.uniform(min_range, max_range)  # Example market cap range
+        market_cap2 = random.uniform(min_range, max_range)
+        day1.append((symbol, price, week_high, week_low, market_cap))  
+        day2.append((symbol, price2, week_high2, week_low2, market_cap2))  
+
+
 
     # Generate the list that needs to be sorted
     u_list = []
     
     if gs.selected_option == 'Percent Change':
         for i in range(len(day1)):
-            percent_change = ((day2[i] - day1[i]) / day1[i] * 100)
-            stock_name = stock_name[i]
-            u_list.append((stock_name), (percent_change))
+            percent_change = ((day2[i][1] - day1[i][1]) / day1[i][1] * 100)
+            stock_name = day1[i][0]
+            u_list.append((stock_name, percent_change))
     elif gs.selected_option == 'Price Change':
-        day2 = Stock_1.get_all_stock_prices()
         for i in range(len(day1)):
-            price_change = (day2[i] - day1[i])
-            stock_name = stock_name[i]
-            u_list.append((stock_name), (price_change))
+            price_change = (day2[i][1] - day1[i][1])
+            stock_name = day1[i][0]
+            u_list.append((stock_name, price_change))
     elif gs.selected_option == '52-Week-Low':
-        day1 = Stock_1.get_all_stock_52_week_low()
         for i in range(len(day1)):
-            week_low = day1[i]
-            u_list.append((stock_name), (week_low))
+            week_low = day1[i][3]
+            stock_name = day1[i][0]
+            u_list.append((stock_name, week_low))
     elif gs.selected_option == '52-Week-High':
-        day1 = Stock_1.get_all_stock_52_week_high()
         for i in range(len(day1)):
-            week_high = day1[i]
-            u_list.append((stock_name), (week_high))
+            week_high = day1[i][2]
+            stock_name = day1[i][0]
+            u_list.append((stock_name, week_high))
     elif gs.selected_option == 'Market Cap':
-        day1 = Stock_1.get_all_stock_market_caps()
         for i in range(len(day1)):
-            market_cap = day1[i]
-            u_list.append((stock_name), (market_cap))
-
-    
+            market_cap = day1[i][4]
+            stock_name = day1[i][0]
+            u_list.append((stock_name, market_cap))
 
     unsorted_lst = u_list
 
