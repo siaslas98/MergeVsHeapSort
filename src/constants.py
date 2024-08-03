@@ -58,17 +58,15 @@ TITLE_TO_TIPS_OFFSET = 20
 
 sorting_bottom = int(WINDOWSIZE[1] * 0.85)
 
-# This is unused and can be removed
-basic_controls = FONT2.render("R - Reset | SPACE - Start Sorting | A - Ascending | D - Descending", 1, TEXT_COLOR1)
-controls_x = WINDOWSIZE[0] / 2 - basic_controls.get_width()/2
-sort_controls = FONT2.render("H - Heap Sort | M - Merge Sort", 1, TEXT_COLOR1)
-
 Menu_Title = FONT1.render("Sorting Algorithm Visualizer", 1, TEXT_COLOR1)
 controls_menu = WINDOWSIZE[0] / 2 - Menu_Title.get_width()/2
 
 Menu_tips = FONT2.render("Click on the buttons to select the sorting algorithm and order", 1, TEXT_COLOR1)
 controls_menu_tips = controls_menu + Menu_Title.get_height() + TITLE_TO_TIPS_OFFSET
 
+Loading_dialogue = FONT1.render("Sorting data...", 1, TEXT_COLOR1)
+loading_text_x = WINDOWSIZE[0] / 2 - Loading_dialogue.get_width()/2
+loading_text_y = WINDOWSIZE[1] / 2 - Loading_dialogue.get_height()/2
 
 # Sorting
 # n = 31 for trees

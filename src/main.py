@@ -14,7 +14,6 @@ from draw import *
 from calculations import *
 from stock import *
 
-
 class SortInfo:
     def __init__(self):
         self.sort = False
@@ -38,10 +37,6 @@ class SortInfo:
         self.sort_dropdown_expanded = False
         self.order_dropdown_expanded = False
         self.attribute_dropdown_expanded = False
-
-        # Initialize the input box for menu_display screen
-        self.input_box = InputBox(120, 35)
-        self.input_box_group.add(self.input_box)
 
 
 def initialize_pygame():
@@ -143,9 +138,21 @@ def menu_display(screen, sort_info, clock):
             for btn in sort_info.menu_buttons_group:
                 if btn.rect.collidepoint(mouse_pos):
                     if btn.name == 'Sort!':
-                        print('Move to next screen.');
+                        return True
 
         draw(screen, sort_info)  # Updated draw call
+        pg.display.update()
+        clock.tick(60)
+
+def loading_display(screen, sort_info, clock):
+    while True:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pg.quit()
+                sys.exit()
+
+        screen.fill(BACKGROUND_COLOR)
+        screen.blit(Loading_dialogue, (loading_text_x, loading_text_y))
         pg.display.update()
         clock.tick(60)
 
@@ -159,7 +166,9 @@ def main():
     clock = pg.time.Clock()
     sort_info = SortInfo()
     initialize_buttons(screen, sort_info)
-    menu_display(screen, sort_info, clock)
+    move_to_loading_screen = menu_display(screen, sort_info, clock)
+    if move_to_loading_screen:
+        loading_display(screen, sort_info, clock)
     gen_starting_list(sort_info)
 
 
