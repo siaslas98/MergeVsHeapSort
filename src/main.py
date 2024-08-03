@@ -14,6 +14,7 @@ from draw import *
 from calculations import *
 from stock import *
 
+
 class SortInfo:
     def __init__(self):
         self.sort = False

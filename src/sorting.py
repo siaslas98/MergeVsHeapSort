@@ -3,73 +3,64 @@ from box import Box
 from node import Node
 from bars import *
 from draw import *
-from typing import List
-from constants import *
-from calculations import *
+from constants import n
 
 
 ''' Heap building in place'''
 
 
-def heapify(screen, sort_info, parent, root_pos, clock, steps=20):
-    from main import draw_heap
+def heapify(screen, clock, sort_info, parent, comparator):
+
+    arr = sort_info.list
 
     largest = parent
-    left = 2 * parent + 1
-    right = 2 * parent + 2
+    left_child = 2 * parent + 1
+    right_child = 2 * parent + 2
 
     # Check if left child exists and is greater than root
-    if left < n and sort_info.nodes[left].val > sort_info.nodes[largest].val:
-        largest = left
+    if left_child < n and comparator(arr[left_child]) > comparator(arr[largest]):
+        largest = left_child
 
     # Check if right child exists and is greater than largest so far
-    if right < n and sort_info.nodes[right].val > sort_info.nodes[largest].val:
-        largest = right
+    if right_child < n and comparator(arr[right_child]) > comparator(arr[largest]):
+        largest = right_child
 
     # If largest is not root
     if largest != parent:
-
-        # Slide values into their new positions
-        slide_values(screen, sort_info, parent, largest, steps, clock)
-
-        sort_info.nodes[parent].val, sort_info.nodes[largest].val = sort_info.nodes[largest].val, sort_info.nodes[parent].val  # Swap
-
-        # Swap values in the boxes
-        parent_box = None
-        largest_box = None
-        for box in sort_info.boxes:
-            if box.idx == parent:
-                parent_box = box
-            elif box.idx == largest:
-                largest_box = box
-        if parent_box and largest_box:
-            parent_box.update_val(sort_info.nodes[parent].val)
-            largest_box.update_val(sort_info.nodes[largest].val)
-
-        # Visualize the swap
-        draw_heap(screen, sort_info, highlight={parent, largest})
-        pg.display.update()
-        clock.tick(60)
-
-        # Recursively heapify the affected subtree
-        heapify(screen, sort_info, largest, root_pos, clock)
+        arr[parent], arr[largest] = arr[largest], arr[parent]  # Swap
+        heapify(screen, clock, sort_info, largest, comparator)
 
 
-def build_heap(screen, sort_info, root_pos, clock):
+def build_heap(screen, clock, sort_info, comparator):
     for idx in range(n // 2 - 1, -1, -1):
-        heapify(screen, sort_info, idx, root_pos, clock)
-        # Visualize the heap after each heapify call
+        heapify(screen, clock, sort_info, idx, comparator)
 
-    sort_info.list = [node.val for node in sort_info.nodes]
+
+def extract_max(screen, clock, sort_info, comparator):
+    global n
+    arr = sort_info.list
+    for idx in range(n-1, 0, -1):
+        arr[0], arr[idx] = arr[idx], arr[0]  # Swap
+
+        n -= 1
+
+        heapify(screen, clock, sort_info, 0, comparator)
+
+
+def heap_sort(screen, clock, sort_info, comparator):
+    build_heap(screen, clock, sort_info, comparator)
+    extract_max(screen, clock, sort_info, comparator)
 
 
 ''' End of Heap building in place'''
 
 
-''' Heap sort using heap insert: This is less efficient than the in-place sorting'''
+''' Heap sort using heap insert: 
+    This is less efficient than the in-place sorting
+    Please Ignore as this will not be used '''
 
 
-def heap_sort(heap, sort_info):
+def heap_sort2(heap, sort_info):
     while heap.size > 0 and sort_info.sort and not sort_info.lst_sorted:
         heap.extract(sort_info)
 
@@ -84,29 +75,23 @@ def heap_sort(heap, sort_info):
 ''' Tim Sort '''
 
 
-def binary_search(arr, left, right, key, comparator):
-    while left <= right:
-        mid = left + (right - left) // 2
-        if comparator(arr[mid]) == comparator(key):
-            return mid + 1
-        elif comparator(arr[mid]) < comparator(key):
-            left = mid + 1
-        else:
-            right = mid - 1
-
-    return left
-
-
-def binary_insertion_sort(arr, left, right, comparator, sort_info, screen):
-    for i in range(left + 1, right + 1):
+def binary_insertion_sort(screen, sort_info, start, end, comparator):
+    arr = sort_info.list
+    for i in range(start + 1, end + 1):
         key = arr[i]
-        position = binary_search(arr, left, i - 1, key, comparator)
-        for j in range(i, position, -1):
-            arr[j] = arr[j - 1]
-        arr[position] = key
+        left = start
+        right = i - 1
 
-        min_stock = min(arr[left:right + 1], key=comparator)
-        max_stock = max(arr[left:right + 1], key=comparator)
+        while left <= right:
+            mid = (left + right) // 2
+            if comparator(key) < comparator(arr[mid]):
+                right = mid - 1
+            else:
+                left = mid + 1
+
+        for j in range(i, left, -1):
+            arr[j] = arr[j-1]
+        arr[left] = key
 
 
 def merge(arr, left, mid, right, comparator, sort_info, screen):
@@ -129,25 +114,26 @@ def merge(arr, left, mid, right, comparator, sort_info, screen):
         arr[k] = left_array[i]
         k += 1
         i += 1
+
     while j < len(right_array):
         arr[k] = right_array[j]
         k += 1
         j += 1
 
 
-def timsort(arr, comparator, sort_info, screen):
-    array_length = len(arr)
+def timsort(screen, sort_info, comparator):
+    arr = sort_info.list
 
-    # split array
-    for start in range(0, array_length, MIN_RUN_SIZE):
-        end = min(start + MIN_RUN_SIZE - 1, array_length - 1)
-        binary_insertion_sort(arr, start, end, comparator, sort_info, screen)
+    # Split array into runs and sort each run using binary insertion sort
+    for start in range(0, n, MIN_RUN_SIZE):
+        end = min(start + MIN_RUN_SIZE - 1, n - 1)
+        binary_insertion_sort(screen, sort_info, start, end, comparator)
 
     size = MIN_RUN_SIZE
-    while size < array_length:
-        for left in range(0, array_length, 2 * size):
-            mid = min(array_length - 1, left + size - 1)
-            right = min((left + 2 * size - 1), (array_length - 1))
+    while size < n:
+        for left in range(0, n, 2 * size):
+            mid = min(n - 1, left + size - 1)
+            right = min((left + 2 * size - 1), (n - 1))
 
             if mid < right:
                 merge(arr, left, mid, right, comparator, sort_info, screen)
@@ -155,4 +141,6 @@ def timsort(arr, comparator, sort_info, screen):
         size *= 2
 
     sort_info.sort = False
-    sort_info.list = arr
+
+
+

@@ -100,14 +100,3 @@ COLOR_ACTIVE = pg.Color('dodgerblue2')
 
 # Tim Sort
 MIN_RUN_SIZE = 32
-
-RUN_COLORS = [
-    (255, 0, 0),      # Red
-    (0, 255, 0),      # Green
-    (0, 0, 255),      # Blue
-    (255, 255, 0),    # Yellow
-    (255, 165, 0),    # Orange
-    (128, 0, 128),    # Purple
-    (0, 255, 255),    # Cyan
-    (255, 192, 203),  # Pink
-]
