@@ -45,7 +45,7 @@ class SortInfo:
 def initialize_pygame():
     pg.init()
     screen = pg.display.set_mode(WINDOWSIZE)
-    pg.display.set_caption("Sorting Algorithm Visualizer")
+    pg.display.set_caption("Sorting Stock Data")
     return screen
 
 
