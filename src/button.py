@@ -59,6 +59,15 @@ class Button(pg.sprite.Sprite):
             self.screen.blit(self.image, self.bottom_rect)
             self.screen.blit(self.image, self.top_rect_elevated)
 
+    def change_button_name(self, text):
+        self.text_color = (255, 255, 255)  # White color
+        self.text_surf1 = c.FONT2.render(text, True, self.text_color)
+        self.text_surf2 = c.FONT2.render(text, True, self.text_color)
+        self.text_surf_ele = c.FONT2.render(text, True, self.text_color)
+        self.text_rect1 = self.text_surf1.get_rect(center=self.top_rect.center)
+        self.text_rect2 = self.text_surf2.get_rect(center=self.top_rect.center)
+        self.text_rect_ele = self.text_surf_ele.get_rect(center=self.top_rect_elevated.center)
+
     def draw_text(self, font, color):
         mouse_pos = pg.mouse.get_pos()
         if not self.top_rect.collidepoint(mouse_pos):

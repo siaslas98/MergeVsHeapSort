@@ -28,18 +28,9 @@ FONT4 = pg.font.SysFont('Arial Black', 17)
 # This is for the input box on menu display
 DROPDOWN_OFFSET = 50
 
-# Button positions
-SORT_BEGIN = ((WINDOWSIZE[0]-434) / 2)
-SORT = (SORT_BEGIN, round(0.95 * WINDOWSIZE[1]))  # This is currently unused
-STOP = (SORT_BEGIN + 242, round(0.95 * WINDOWSIZE[1])) # This is currently unused
-
-SORT_BUTTON = (263, 200)
-ORDER_BUTTON = (505, 200)
+ORDER_BUTTON = (263, 200)
 ATTRIBUTE_BUTTON = (747, 200)
-
-# Sort type positions
-HEAP_SORT = (SORT_BUTTON[0], SORT_BUTTON[1] + DROPDOWN_OFFSET)
-TIM_SORT = (SORT_BUTTON[0], SORT_BUTTON[1] + 2 * DROPDOWN_OFFSET)
+SUBMIT_BUTTON = (600 - 96, 500)
 
 # Order positions
 ASC = (ORDER_BUTTON[0], ORDER_BUTTON[1] + DROPDOWN_OFFSET)

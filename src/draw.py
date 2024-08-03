@@ -84,12 +84,6 @@ def draw(screen, sort_info, bars=None, new_ele_idx=None):
         if sort_info.attribute_dropdown_expanded:
             draw_buttons(screen, sort_info, btn_type='attribute')
 
-        for box in sort_info.input_box_group:
-            box.update()
-
-        for box in sort_info.input_box_group:
-            box.draw(screen)
-
 
 def visualize_merge_step(screen, sort_info, runs, unsorted_lst, comparator, final=False):
     # Ensure runs and unsorted_lst are not empty
