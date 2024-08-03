@@ -1,100 +1,113 @@
 import pygame as pg
-from colors import *
-
-#Initialize the color class
-Colors = Colors()
-
-# Function to render text with an outline
-def render_text_with_outline(font, text, main_color, outline_color):
-    base = font.render(text, True, outline_color)
-    outline = pg.Surface((base.get_width() + 2, base.get_height() + 2), pg.SRCALPHA)
-    outline.blit(font.render(text, True, outline_color), (0, 1))
-    outline.blit(font.render(text, True, outline_color), (2, 1))
-    outline.blit(font.render(text, True, outline_color), (1, 0))
-    outline.blit(font.render(text, True, outline_color), (1, 2))
-    outline.blit(font.render(text, True, main_color), (1, 1))
-    return outline
-    
-def render_text_with_shadow(font, text, main_color, shadow_color, offset=(2, 2), shadow_thickness=3):
-    # Create a surface for the text with shadow
-    text_surface = font.render(text, True, main_color)
-    width, height = text_surface.get_size()
-    shadow_surface = pg.Surface((width + offset[0] * shadow_thickness, height + offset[1] * shadow_thickness), pg.SRCALPHA)
-    
-    # Render the shadow text multiple times to create a thicker shadow
-    for i in range(shadow_thickness):
-        shadow = font.render(text, True, shadow_color)
-        shadow_surface.blit(shadow, (offset[0] * i, offset[1] * i))
-    
-    # Blit the main text onto the surface
-    shadow_surface.blit(text_surface, (0, 0))
-    return shadow_surface
 
 pg.init()
 
-info = pg.display.Info()
 # Display size
-WINDOWSIZE = (info.current_w, info.current_h)
+WINDOWSIZE = (1200, 800)
 #WINDOWSIZE = (1800, 1000)
 
-# Padding
+# Padding for the sorting screen display
 TOTAL_SIDE_PAD = 100
 SIDE_PAD = round(TOTAL_SIDE_PAD / 2)
 TOP_PADDING = 100
 
-
+# Colors
+BACKGROUND_COLOR = (64, 64, 64)
+TEXT_COLOR1 = (225, 223, 230)
+TEXT_COLOR2 = (114, 118, 184)
 SORTED = 'Green'
 CURRENT = 'Blue'
 UNSORTED = [(200, 200, 200), (128, 128, 128), (50, 50, 50)]
 
 # Fonts
-Title_Font = pg.font.SysFont('Comic Sans MS', 80)
-Tips_Font = pg.font.SysFont('Comic Sans MS', 40)
 FONT1 = pg.font.SysFont('Arial Black', 50)
 FONT2 = pg.font.SysFont('Arial Black', 30)
-Button_Font = pg.font.SysFont('Arial Black', 25)
+FONT3 = pg.font.SysFont('Arial Black', 18)
+FONT4 = pg.font.SysFont('Arial Black', 17)
+
+# This is for the input box on menu display
+DROPDOWN_OFFSET = 50
+
+# Button positions
+SORT_BEGIN = ((WINDOWSIZE[0]-434) / 2)
+SORT = (SORT_BEGIN, round(0.95 * WINDOWSIZE[1]))  # This is currently unused
+STOP = (SORT_BEGIN + 242, round(0.95 * WINDOWSIZE[1])) # This is currently unused
+
+SORT_BUTTON = (263, 200)
+ORDER_BUTTON = (505, 200)
+ATTRIBUTE_BUTTON = (747, 200)
+MAIN_MENU_BUTTON = (800, 100)
+
+# Sort type positions
+HEAP_SORT = (SORT_BUTTON[0], SORT_BUTTON[1] + DROPDOWN_OFFSET)
+TIM_SORT = (SORT_BUTTON[0], SORT_BUTTON[1] + 2 * DROPDOWN_OFFSET)
+
+# Order positions
+ASC = (ORDER_BUTTON[0], ORDER_BUTTON[1] + DROPDOWN_OFFSET)
+DESC = (ORDER_BUTTON[0], ORDER_BUTTON[1] + 2 * DROPDOWN_OFFSET)
+
+# Attribute positions
+OPEN = (ATTRIBUTE_BUTTON[0], ATTRIBUTE_BUTTON[1] + DROPDOWN_OFFSET)
+HIGH = (ATTRIBUTE_BUTTON[0], ATTRIBUTE_BUTTON[1] + 2 * DROPDOWN_OFFSET)
+LOW = (ATTRIBUTE_BUTTON[0], ATTRIBUTE_BUTTON[1] + 3 * DROPDOWN_OFFSET)
+CLOSE = (ATTRIBUTE_BUTTON[0], ATTRIBUTE_BUTTON[1] + 4 * DROPDOWN_OFFSET)
+VOLUME = (ATTRIBUTE_BUTTON[0], ATTRIBUTE_BUTTON[1] + 5 * DROPDOWN_OFFSET)
+OPENINT = (ATTRIBUTE_BUTTON[0], ATTRIBUTE_BUTTON[1] + 6 * DROPDOWN_OFFSET)
+
+# Analyze button position
+MAIN_MENU_BUTTON_POSITION = (MAIN_MENU_BUTTON[0], MAIN_MENU_BUTTON[1])
 
 
 # Image Dictionary
 # Key is path, value is reference name
-IMAGE_DICT = {'imgs/Blank.png': 'Blank',
-              'imgs/Rectangular/Green/Blank.png': 'Green',
-              'imgs/Rectangular/Blue/Blank.png': 'Blue',
-              'Background/Cash.jpg': 'Cash',
-              'imgs/Buttons.png': 'Buttons',
-              }
+IMAGE_DICT = {'../imgs/Blank.png': 'Blank'}
 
 # Additional button attributes
-SCALE = (400, 100)
+SCALE = 1
 ELEVATION = 1.5
 
-Menu_Title = render_text_with_shadow(Title_Font, "Stock_Statistics", Colors.get_color('yellow_gold'), Colors.get_color('black'))
-Menu_Tips = render_text_with_shadow(Tips_Font, "Click on the button to select the statistic, order, whether to visualize", Colors.get_color('yellow_gold'), Colors.get_color('black'))
-
-# Button positions
-SORT_BEGIN = ((WINDOWSIZE[0]-434) / 2)
-SORT = (SORT_BEGIN, round(0.95 * WINDOWSIZE[1]))
-STOP = (SORT_BEGIN + 242, round(0.95 * WINDOWSIZE[1]))
-Menu_Title_Position = ((WINDOWSIZE[0] /2 - Menu_Title.get_width() /2), (20))
-Menu_Tips_Position = ((WINDOWSIZE[0] / 2 - Menu_Tips.get_width() / 2), (Menu_Title.get_height() + 15))
-high_button_position = ((WINDOWSIZE[0] / 2) - (SCALE[0] / 2), Menu_Title_Position[1] + Menu_Tips_Position[1] + 50)
-low_button_position = ((WINDOWSIZE[0] / 2) - (SCALE[0] / 2), high_button_position[1] + 100)
-percent_change_position = ((WINDOWSIZE[0] / 2) - (SCALE[0] / 2), Menu_Title_Position[1] + Menu_Tips_Position[1] + 50)
-price_change_position = ((WINDOWSIZE[0] / 2) - (SCALE[0] / 2), percent_change_position[1] + 100)
-week_52_Low_position = ((WINDOWSIZE[0] / 2) - (SCALE[0] / 2), price_change_position[1] + 100)
-week_52_High_position = ((WINDOWSIZE[0] / 2) - (SCALE[0] / 2), week_52_Low_position[1] + 100)
-market_cap_position = ((WINDOWSIZE[0] / 2) - (SCALE[0] / 2), week_52_High_position[1] + 100)
-
-# Define bottom
+# Define vertical offset between title and tips
+TITLE_TO_TIPS_OFFSET = 20
 
 sorting_bottom = int(WINDOWSIZE[1] * 0.85)
 
-# Number of items to sort
-n = 80
-# Sorting Range
-min_val = 10
-max_val = 150
+# This is unused and can be removed
+basic_controls = FONT2.render("R - Reset | SPACE - Start Sorting | A - Ascending | D - Descending", 1, TEXT_COLOR1)
+controls_x = WINDOWSIZE[0] / 2 - basic_controls.get_width()/2
+sort_controls = FONT2.render("H - Heap Sort | M - Merge Sort", 1, TEXT_COLOR1)
 
-min_range = 0.5
-max_range = 1000
+Menu_Title = FONT1.render("Sorting Algorithm Visualizer", 1, TEXT_COLOR1)
+controls_menu = WINDOWSIZE[0] / 2 - Menu_Title.get_width()/2
 
+Menu_tips = FONT2.render("Click on the buttons to select the sorting algorithm and order", 1, TEXT_COLOR1)
+controls_menu_tips = controls_menu + Menu_Title.get_height() + TITLE_TO_TIPS_OFFSET
+
+Analyze_Title = FONT1.render("Results", 1, TEXT_COLOR1)
+analyze_title_x = WINDOWSIZE[0] / 2 - Analyze_Title.get_width()/2
+analyze_title_y = 10
+
+Analyze_tips = FONT2.render("Below are the top 5 stocks", 1, TEXT_COLOR1)
+analyze_tips_x = WINDOWSIZE[0] / 2 - Analyze_tips.get_width()/2
+analyze_tips_y = analyze_title_y + Analyze_Title.get_height() + TITLE_TO_TIPS_OFFSET
+
+# Sorting
+# n = 31 for trees
+n = 100  # for bars
+
+# Box Attributes + Node Attributes(Ignore this)
+STARTING_X = 50
+STARTING_Y = 50
+BOX_WIDTH = (WINDOWSIZE[0] - 100) / 31
+BOX_HEIGHT = 40
+RADIUS = 25
+BOX_TOP_PAD = 50
+BOX_BOTTOM_PAD = 20
+ROOT_Y_POS = BOX_TOP_PAD + BOX_BOTTOM_PAD + BOX_HEIGHT + RADIUS
+VERT_SPACING = 150
+
+# Input Box
+COLOR_INACTIVE = pg.Color('lightskyblue3')
+COLOR_ACTIVE = pg.Color('dodgerblue2')
+
+# Tim Sort
+MIN_RUN_SIZE = 32

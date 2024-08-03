@@ -1,457 +1,291 @@
+import pygame as pg
+from constants import *
 import sys
 import random
-import pygame as pg
+from load_data import load_data
 from images import *
 from button import *
-from constants import *
+from bars import *
+from box import *
+from node import Node
 from heap import Heap
 from sorting import *
-from bars import *
 from draw import *
-from timer import Timer
-from timsort import *
-from colors import *
-from Load_Stocks import Stocks
-from Text_Input import Text_Input_Box
+from calculations import *
+from stock import *
 
-pg.init()
-pg.mixer.init()
-pg.mixer.music.load("Audio/22.mp3")
-# setting the screen 
-screen = pg.display.set_mode(WINDOWSIZE)
-pg.display.set_caption("Stock Statistics + Sorting Algorithm Visualizer")
-clock = pg.time.Clock()  # For controlling framerate
 
-# initializing the timer
-timer = Timer()
+class SortInfo:
+    def __init__(self):
+        self.sort = False
+        self.click = False
+        self.ascending = True
+        self.lst_sorted = False
+        self.selected_sort = None
+        self.selected_order = None
+        self.selected_attribute = None
+        self.date = ""
+        self.list = []  # List  of stock data objects to perform sorting on
+        self.images = Images()
+        self.menu_buttons_group = pg.sprite.Group()
+        self.sort_buttons_group = pg.sprite.Group()
+        self.order_buttons_group = pg.sprite.Group()
+        self.attribute_buttons_group = pg.sprite.Group()
+        self.analyze_buttons_group = pg.sprite.Group()
+        self.input_box_group = pg.sprite.Group()
+        self.boxes = pg.sprite.Group()  # This is for testing a tree based representation
+        self.nodes = pg.sprite.Group()  # This is for testing a tree based representation
+        self.heap = None
+        self.bars = None
+        self.sort_dropdown_expanded = False
+        self.order_dropdown_expanded = False
+        self.attribute_dropdown_expanded = False
 
-class GS:
-    lst_sorted = False
-    selected_option = None
-    selected_order = None
-    show_visuals = None
-    visual = None
-    date = (None,None)
+        # Initialize the input box for menu_display screen
+        self.input_box = InputBox(120, 35)
+        self.input_box_group.add(self.input_box)
 
-def disp_message(text, font, color, x, y):
-    message = font.render(text, True, color)
-    message_rect = message.get_rect(center=(x, y))
-    screen.blit(message, message_rect)
 
-def gen_button_stats(images):
-    buttons_lst = []
-    stats_visible = Button(screen, images, 'Statistics', 200, 200, SCALE, ELEVATION)
-    return buttons_lst
+def initialize_pygame():
+    pg.init()
+    screen = pg.display.set_mode(WINDOWSIZE)
+    pg.display.set_caption("Sorting Algorithm Visualizer")
+    return screen
 
-def gen_visual_buttons(images):
-    buttons_lst = []
-    sort_button = Button(screen, images, 'Start/Resume Sort', SORT[0], SORT[1], SCALE, ELEVATION)
-    stop_button = Button(screen, images, 'Stop', STOP[0], STOP[1], SCALE, ELEVATION)
-    buttons_lst.append(sort_button)
-    buttons_lst.append(stop_button)
-    return buttons_lst
 
-def gen_menu_buttons_part1(images):
-    buttons_lst = []
+def gen_starting_list(sort_info):
+    if sort_info.date and sort_info.selected_attribute:
+        stock_data = load_data(sort_info.date, '../Stocks')  # Load data with date filtering
+        sort_info.list = stock_data[:n]
 
-    percent_change_button = Button(screen, images, 'Percent Change', percent_change_position[0], percent_change_position[1], SCALE, ELEVATION)
-    price_change_button = Button(screen, images, 'Price Change', price_change_position[0], price_change_position[1], SCALE, ELEVATION)
-    week_52_low_button = Button(screen, images, '52-Week-Low', week_52_Low_position[0], week_52_Low_position[1], SCALE, ELEVATION)
-    week_52_high_button = Button(screen, images, '52-Week-High', week_52_High_position[0], week_52_High_position[1], SCALE, ELEVATION)
-    market_cap_button = Button(screen, images, 'Market Cap', market_cap_position[0], market_cap_position[1], SCALE, ELEVATION)  
-    buttons_lst.extend([week_52_high_button, week_52_low_button, price_change_button, percent_change_button, market_cap_button])
-    return buttons_lst
 
-def gen_menu_buttons_part2(images):
-    buttons_lst = []
-    low_button = Button(screen, images, 'Minimum', low_button_position[0], low_button_position[1] , SCALE, ELEVATION)
-    high_button = Button(screen, images, 'Maximum', high_button_position[0], high_button_position[1], SCALE, ELEVATION)
-    buttons_lst.extend([ high_button, low_button])
-    return buttons_lst
+# Reference button.py for more info
+def gen_menu_buttons(screen, sort_info):
+    main_buttons = [
+        ('Sort Type', SORT_BUTTON),
+        ('Order', ORDER_BUTTON),
+        ('Attributes', ATTRIBUTE_BUTTON),
+    ]
 
-def gen_menu_buttons_part3(images):
-    buttons_lst = []
-    yes_button = Button(screen, images, 'Yes', high_button_position[0], high_button_position[1], SCALE, ELEVATION)
-    no_button = Button(screen, images, 'No', low_button_position[0], low_button_position[1], SCALE, ELEVATION)
-    buttons_lst.extend([ no_button, yes_button])
-    return buttons_lst
+    for name, pos in main_buttons:
+        button = Button(screen, sort_info, name, pos[0], pos[1], SCALE, ELEVATION)
+        sort_info.menu_buttons_group.add(button)
 
-def gen_menu_buttons_part4(images):
-    buttons_lst = []
-    timsort_button = Button(screen, images, 'Timsort', high_button_position[0], high_button_position[1], SCALE, ELEVATION)
-    heap_sort_button = Button(screen, images, 'Heap Sort', low_button_position[0], low_button_position[1], SCALE, ELEVATION)
-    buttons_lst.extend([ timsort_button, heap_sort_button])
-    return buttons_lst
+    # ******************************************************************
 
-def is_sorted(lst, ascending=True):
-    """Check if the list is sorted in the specified order."""
-    if ascending:
-        return all(lst[i] <= lst[i + 1] for i in range(len(lst) - 1))
-    else:
-        return all(lst[i] >= lst[i + 1] for i in range(len(lst) - 1))
+    sort_buttons = [
+        ('Heap Sort', HEAP_SORT),
+        ('Tim Sort', TIM_SORT)
+    ]
 
-def Display_Statistics():
-    # Create a screen
-    screen_width = 800
-    screen_height = 600
-    screen = pg.display.set_mode((screen_width, screen_height))
-    pg.display.set_caption("Sorting Statistics")
+    for name, pos in sort_buttons:
+        button = Button(screen, sort_info, name, pos[0], pos[1], SCALE, ELEVATION)
+        sort_info.sort_buttons_group.add(button)
 
-    # Define colors
-    white = (255, 255, 255)
-    black = (0, 0, 0)
+    # ******************************************************************
 
-    # Define font
-    font = pg.font.Font(None, 74)
+    order_buttons = [
+        ('Ascending', ASC),
+        ('Descending', DESC)
+    ]
 
-    # Get the elapsed time
-    elapsed_time = timer.get_elapsed_time()
+    for name, pos in order_buttons:
+        button = Button(screen, sort_info, name, pos[0], pos[1], SCALE, ELEVATION)
+        sort_info.order_buttons_group.add(button)
 
-    # Convert elapsed time to a string and round to 2 decimal places
-    elapsed_time_str = f"Elapsed Time: {elapsed_time:.2f} seconds"
+    # ******************************************************************
 
-    # Main loop
-    running = True
-    while running:
+    attribute_buttons = [
+        ('Open', OPEN),
+        ('High', HIGH),
+        ('Low', LOW),
+        ('Close', CLOSE),
+        ('Volume', VOLUME),
+        ('OpenInt', OPENINT)
+    ]
+
+    for name, pos in attribute_buttons:
+        button = Button(screen, sort_info, name, pos[0], pos[1], SCALE, ELEVATION)
+        sort_info.attribute_buttons_group.add(button)
+
+    # ******************************************************************
+
+    analyze_buttons = [
+        ('Main Menu', MAIN_MENU_BUTTON_POSITION)
+    ]
+    
+    for name, pos in analyze_buttons:
+        button = Button(screen, sort_info, name, pos[0], pos[1], SCALE, ELEVATION)
+        sort_info.analyze_buttons_group.add(button)
+
+
+def menu_display(screen, sort_info, clock):
+    while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                running = False
-        
-        # Fill the screen with white color
-        screen.fill(white)
+                pg.quit()
+                sys.exit()
 
-        # Render the elapsed time text
-        text = font.render(elapsed_time_str, True, black)
-        text_rect = text.get_rect(center=(screen_width/2, screen_height/2))
+            sort_info.input_box.handle_event(event, sort_info)  # Handle text-box input
 
-        # Blit the text onto the screen
-        screen.blit(text, text_rect)
+            # If mouse inside borders of button and pressed
+            if event.type == pg.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
 
-        # Update the display
-        pg.display.flip()
-    
-    # Quit Pygame
-    pg.quit()
-    sys.exit()
+                for btn in sort_info.menu_buttons_group:
+                    if btn.rect.collidepoint(mouse_pos) and btn.update(FONT2, TEXT_COLOR1):
+                        if btn.name == 'Sort Type':
+                            sort_info.sort_dropdown_expanded = not sort_info.sort_dropdown_expanded
+                            sort_info.order_dropdown_expanded = False
+                            sort_info.attribute_dropdown_expanded = False
+                        elif btn.name == 'Order':
+                            sort_info.order_dropdown_expanded = not sort_info.order_dropdown_expanded
+                            sort_info.sort_dropdown_expanded = False
+                            sort_info.attribute_dropdown_expanded = False
+                        elif btn.name == 'Attributes':
+                            sort_info.attribute_dropdown_expanded = not sort_info.attribute_dropdown_expanded
+                            sort_info.sort_dropdown_expanded = False
+                            sort_info.order_dropdown_expanded = False
 
-def menu_display_1(images):
-    global gs
+                if sort_info.sort_dropdown_expanded:
+                    for btn in sort_info.sort_buttons_group:
+                        if btn.rect.collidepoint(mouse_pos):
+                            sort_info.selected_sort = btn.name
+                            sort_info.sort_dropdown_expanded = False
+
+                if sort_info.order_dropdown_expanded:
+                    for btn in sort_info.order_buttons_group:
+                        if btn.rect.collidepoint(mouse_pos):
+                            sort_info.selected_order = btn.name
+                            sort_info.ascending = (btn.name == 'Ascending')
+                            sort_info.order_dropdown_expanded = False
+
+                # This sets the attributes for the stock objects
+                if sort_info.attribute_dropdown_expanded:
+                    for btn in sort_info.attribute_buttons_group:
+                        if btn.rect.collidepoint(mouse_pos):
+                            sort_info.selected_attribute = btn.name
+                            sort_info.attribute_dropdown_expanded = False
+
+        if sort_info.selected_sort and sort_info.selected_order and sort_info.selected_attribute\
+                and sort_info.date:
+            return  # Exit the menu when both sort and order are selected
+
+        draw(screen, sort_info)  # Updated draw call
+        pg.display.update()
+        clock.tick(60)
+
+
+def sort(screen, sort_info, clock):
+    comparator = Stock.get_comparator(sort_info.selected_attribute.lower(), sort_info.ascending)
+    # Adjust this based on selected_sort
+    sort_function = heap_sort if sort_info.selected_sort == 'Heap Sort' else timsort
+
+    if sort_info.selected_sort == 'Heap Sort':
+        sort_info.heap = Heap(screen, sort_info, comparator)
+        sort_info.bars = get_bars_heapsort(
+            sort_info.heap.arr,
+            sort_info.list,
+            SIDE_PAD,
+            min(sort_info.list, key=comparator),
+            max(sort_info.list, key=comparator),
+            sort_info.selected_attribute.lower()
+        )
+
+    elif sort_info.selected_sort == "Tim Sort":
+        sort_info.bars = get_bars_timsort(
+            [],
+            sort_info.list,
+            SIDE_PAD,
+            min(sort_info.list, key=comparator),
+            max(sort_info.list, key=comparator),
+            sort_info.selected_attribute.lower(),
+        )
 
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
                 sys.exit()
-            
-            # if inside of the button and pressed
-            if event.type == pg.MOUSEBUTTONDOWN:
-                for button in menu_buttons_part1_group:
-                    if button.check_if_clicked():
-                        if button.name == 'Percent Change':
-                            gs.selected_option = 'Percent Change'
-                            return
-                        elif button.name == 'Price Change':
-                            gs.selected_option = 'Price Change'
-                            return
-                        elif button.name == '52-Week-Low':
-                            gs.selected_option = '52-Week'
-                            return
-                        elif button.name == 'Market Cap':
-                            gs.selected_option = 'Market Cap'
-                            return
-                        elif button.name == '52-Week-High':
-                            gs.selected_option = '52-Week-High'
-                            return
-                        else:
-                            raise ValueError("No valid option selected")
 
-        draw(screen, menu_buttons_part1_group, 'Menu')  # Use the draw function from draw.py
-        
-        pg.display.update()
-        clock.tick(60)
-
-def menu_display_2(images):
-    global gs, menu_buttons_part2_group
-
-    while True:
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                pg.quit()
-                sys.exit()
-            # if inside of the button and pressed
-            if event.type == pg.MOUSEBUTTONDOWN:
-                for button in menu_buttons_part2_group:
-                    if button.check_if_clicked():
-                        if button.name == 'Minimum':
-                            gs.selected_order = 'Minimum'
-                            return
-                        elif button.name == 'Maximum':
-                            gs.selected_order = 'Maximum'
-                            return 
-                        else:
-                            raise ValueError("No valid option selected")
-
-        draw(screen, menu_buttons_part2_group, 'Menu')  # Use the draw function from draw.py
-        pg.display.update()
-        clock.tick(60)
-
-def menu_display_3(images):
-    global gs, menu_buttons_part3_group
-
-    while True:
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                pg.quit()
-                sys.exit()
-            # if inside of the button and pressed
-            if event.type == pg.MOUSEBUTTONDOWN:
-                for button in menu_buttons_part3_group:
-                    if button.check_if_clicked():
-                        if button.name == 'Yes':
-                            gs.show_visuals = 'Yes'
-                            return
-                        elif button.name == 'No':
-                            gs.show_visuals = 'No'
-                            return 
-                        else:
-                            raise ValueError("No valid option selected")
-        draw(screen, menu_buttons_part3_group, 'Menu')  # Use the draw function from draw.py
-        pg.display.update()
-        clock.tick(60)
-
-def menu_display_4(images):
-    global gs, menu_buttons_part4_group
-
-    while True:
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                pg.quit()
-                sys.exit()
-            # if inside of the button and pressed
-            if event.type == pg.MOUSEBUTTONDOWN:
-                for button in menu_buttons_part4_group:
-                    if button.check_if_clicked():
-                        if button.name == 'Timsort':
-                            gs.visual= 'Timsort'
-                            return
-                        elif button.name == 'Heap Sort':
-                            gs.visual = 'Heap Sort'
-                            return
-                        else:
-                            raise ValueError("No valid option selected")
-
-        draw(screen, menu_buttons_part4_group, 'Menu')  # Use the draw function from draw.py
-        pg.display.update()
-        clock.tick(60)
-
-def sort_display(images):
-    global unsorted_lst, bars, visual_buttons_group, stats_group, timer
-    # Adjust this based on selected_sort and selected_order
-    if gs.visual == 'Heap Sort':
-        sort_function = heap_sort
-    elif gs.visual == 'Timsort':
-        sort_function = timsort
-    else:
-        raise ValueError("No valid sorting algorithm selected")
-    
-    # Initialize the sorting state
-    sorting_paused = True
-    sorting_start = False
-
-    gs.date = ('2023-10-01', '2023-10-02')
-
-    nasdaq_symbols = [
-        "AAPL", "GOOGL", "MSFT", "AMZN", "FB", "NVDA", "TSLA", "BRK-B", "JPM", "UNH",
-        "V", "JNJ", "WMT", "PG", "XOM", "CVX", "BAC", "DIS", "HD", "MA",
-        "KO", "PEP", "CRM", "INTC", "ADBE", "CSCO", "NFLX", "COST", "CMCSA", "TXN",
-        "PYPL", "PEP", "MCD", "NKE", "MCD", "UNP", "UPS", "CAT", "IBM", "ORCL",
-        "CRM", "QCOM", "AMD", "TXN", "INTU", "ADP", "LOW", "SBUX", "DHR", "HON",
-        "BA", "LMT", "RTX", "UNH", "CVS", "MRK", "PFE", "ABT", "LLY", "GILD",
-        "AMGN", "TMO", "AZN", "NVO", "BMY", "MRNA", "REGN", "ILMN", "CELG", "BIIB",
-        "VRTX", "INCY", "SGEN", "ALXN", "REGN", "ANTM", "HUM", "Cigna", "AET", "DVA",
-        "DGX", "BDX", "SYK", "EW", "CI", "TGT", "TJX", "DLTR", "DG", "WBA",
-        "AAPL", "GOOGL", "MSFT", "AMZN", "FB", "NVDA", "TSLA", "BRK-B", "JPM", "UNH",
-        "V", "JNJ", "WMT", "PG", "XOM", "CVX", "BAC", "DIS", "HD", "MA",
-        "KO", "PEP", "CRM", "INTC", "ADBE", "CSCO", "NFLX", "COST", "CMCSA", "TXN",
-        "PYPL", "PEP", "MCD", "NKE", "MCD", "UNP", "UPS", "CAT", "IBM", "ORCL",
-        "CRM", "QCOM", "AMD", "TXN", "INTU", "ADP", "LOW", "SBUX", "DHR", "HON",
-        "BA", "LMT", "RTX", "UNH", "CVS", "MRK", "PFE", "ABT", "LLY", "GILD",
-        "AMGN", "TMO", "AZN", "NVO", "BMY", "MRNA", "REGN", "ILMN", "CELG", "BIIB",
-        "VRTX", "INCY", "SGEN", "ALXN", "REGN", "ANTM", "HUM", "Cigna", "AET", "DVA",
-        "DGX", "BDX", "SYK", "EW", "CI", "TGT", "TJX", "DLTR", "DG", "WBA",
-        "AAPL", "GOOGL", "MSFT", "AMZN", "FB", "NVDA", "TSLA", "BRK-B", "JPM", "UNH",
-        "V", "JNJ", "WMT", "PG", "XOM", "CVX", "BAC", "DIS", "HD", "MA",
-        "KO", "PEP", "CRM", "INTC", "ADBE", "CSCO", "NFLX", "COST", "CMCSA", "TXN",
-        "PYPL", "PEP", "MCD", "NKE", "MCD", "UNP", "UPS", "CAT", "IBM", "ORCL",
-        "CRM", "QCOM", "AMD", "TXN", "INTU", "ADP", "LOW", "SBUX", "DHR", "HON",
-        "BA", "LMT", "RTX", "UNH", "CVS", "MRK", "PFE", "ABT", "LLY", "GILD",
-        "AMGN", "TMO", "AZN", "NVO", "BMY", "MRNA", "REGN", "ILMN", "CELG", "BIIB",
-        "VRTX", "INCY", "SGEN", "ALXN", "REGN", "ANTM", "HUM", "Cigna", "AET", "DVA",
-        "DGX", "BDX", "SYK", "EW", "CI", "TGT", "TJX", "DLTR", "DG", "WBA"
-        ]
-    index = 0
-    
-    # Generate the two Stocks
-    day1 = []
-    day2 = []
-
-    for symbol in nasdaq_symbols:
-        price = random.uniform(min_range, max_range)
-        price2 = random.uniform(min_range, max_range)
-        week_high = random.uniform(price, max_range)
-        week_high2 = random.uniform(min_range, price)
-        week_low = random.uniform(min_range, price)
-        week_low2 = random.uniform(price, max_range)
-        market_cap = random.uniform(min_range, max_range)  # Example market cap range
-        market_cap2 = random.uniform(min_range, max_range)
-        day1.append((symbol, price, week_high, week_low, market_cap))  
-        day2.append((symbol, price2, week_high2, week_low2, market_cap2))  
-
-
-
-    # Generate the list that needs to be sorted
-    u_list = []
-    
-    if gs.selected_option == 'Percent Change':
-        for i in range(len(day1)):
-            percent_change = ((day2[i][1] - day1[i][1]) / day1[i][1] * 100)
-            stock_name = day1[i][0]
-            u_list.append((stock_name, percent_change))
-    elif gs.selected_option == 'Price Change':
-        for i in range(len(day1)):
-            price_change = (day2[i][1] - day1[i][1])
-            stock_name = day1[i][0]
-            u_list.append((stock_name, price_change))
-    elif gs.selected_option == '52-Week-Low':
-        for i in range(len(day1)):
-            week_low = day1[i][3]
-            stock_name = day1[i][0]
-            u_list.append((stock_name, week_low))
-    elif gs.selected_option == '52-Week-High':
-        for i in range(len(day1)):
-            week_high = day1[i][2]
-            stock_name = day1[i][0]
-            u_list.append((stock_name, week_high))
-    elif gs.selected_option == 'Market Cap':
-        for i in range(len(day1)):
-            market_cap = day1[i][4]
-            stock_name = day1[i][0]
-            u_list.append((stock_name, market_cap))
-
-    unsorted_lst = u_list
-
-    if gs.selected_order == 'Maximum':
-        heap = Heap(screen, unsorted_lst, visual_buttons_group, 'max')
-    elif gs.selected_order == 'Minimum':
-        heap = Heap(screen, unsorted_lst, visual_buttons_group, 'min')
-
-    bars = get_bars(heap.arr, unsorted_lst, SIDE_PAD, min(unsorted_lst), max(unsorted_lst))  # Generate Bar rectangles for drawing
-    
-    Sorting_Finished = False
-
-    while (Sorting_Finished == False):
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                pg.quit()
-                sys.exit()
-            # checking if space bar was pressed to start/stop/resume the sorting
             if event.type == pg.KEYDOWN:
+                # Toggles sort or stop
                 if event.key == pg.K_SPACE:
-                    # If the sorting hasnt started, start it and the timer
-                    if sorting_start == False:
-                        sorting_start = True
-                        timer.start()
-                    # If the sorting is paused, resume it and the timer
-                    elif (sorting_start and sorting_paused):
-                        sorting_paused = False
-                        timer.resume()
-                    # If the sorting is running, pause it and the timer
-                    elif (sorting_start and (sorting_paused == False)):
-                        timer.pause()
-                        sorting_paused = True
+                    sort_info.sort = not sort_info.sort
 
-            if event.type == pg.MOUSEBUTTONDOWN:
-                for button in visual_buttons_group:
-                    if button.check_click():
-                        if button.name == 'Start/Resume Sort':
-                            # If the sorting hasnt started, start it and the timer
-                            if sorting_start == False:
-                                sorting_paused = False
-                                sorting_start = True
-                                timer.start()
-                            # If the sorting is paused, resume it and the timer
-                            elif (sorting_start and sorting_paused):
-                                sorting_paused = False
-                                timer.resume()
-                        if button.name == 'Stop':
-                            # If the sorting is running, pause it and the timer
-                            if (sorting_start and (sorting_paused == False)):
-                                timer.pause()
-                                sorting_paused = True
-                            
-                                
-                        if button.name == 'Statistics':
-                            Sorting = False  
-                            # Exit the sorting loop
-        
-        if Sorting_Finished == False and sorting_start == True:
-            pg.mixer.music.play(-1)
-            heap.insert_unsorted(gs)
-            sort_function(heap, gs)
-            draw(screen, visual_buttons_group, bars)
-            # Check if the list is sorted in the desired order
-            if is_sorted(min_heap.arr, gs.ascending):
-                draw_buttons(screen, stats_group)
-            pg.mixer.music.stop()
+                # Controls reset
+                elif event.key == pg.K_r:
+                    sort_info.sort = False
+                    gen_starting_list(sort_info)
+                    if sort_info.selected_sort == 'Heap Sort':
+                        sort_info.heap = Heap(screen, sort_info, comparator)
+                        sort_info.bars = get_bars_heapsort(sort_info.heap.arr, sort_info.list, SIDE_PAD, min(sort_info.list, key=comparator),  max(sort_info.list, key=comparator), sort_info.selected_attribute.lower())
+                    elif sort_info.selected_sort == 'Tim Sort':
+                        sort_info.bars = get_bars_timsort(sort_info.list, [], SIDE_PAD, min(sort_info.list, key=comparator), max(sort_info.list, key=comparator), sort_info.selected_attribute.lower(), RUN_COLORS)
+
+        if not sort_info.sort:
+            None
+            # draw(screen, sort_info, sort_info.bars)  # Initial state of the bars, before we press space to begin sorting
+
+        elif sort_info.sort:
+            if sort_info.selected_sort == 'Heap Sort':
+                sort_info.heap.insert_unsorted(sort_info)  # Part 1 - Insert elements into heap
+                sort_function(sort_info.heap, sort_info)  # Part 2 - Sort elements
+                sort_info.bars = get_bars_heapsort(sort_info.list, [], SIDE_PAD, min(sort_info.list, key=comparator), max(sort_info.list, key=comparator), sort_info.selected_attribute.lower())
+            elif sort_info.selected_sort == 'Tim Sort':
+                sort_function(sort_info.list, comparator, sort_info, screen)
+                sort_info.bars = get_bars_timsort([], sort_info.list, SIDE_PAD, min(sort_info.list, key=comparator), max(sort_info.list, key=comparator), sort_info.selected_attribute.lower(), RUN_COLORS)
 
         pg.display.update()
         clock.tick(60)
+
+def Analytics_screen(screen, sort_info, clock):
+    while True:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pg.quit()
+                sys.exit()
+            elif event.type == pg.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+                for btn in sort_info.analyze_buttons_group:
+                    if btn.rect.collidepoint(mouse_pos) and btn.update(FONT2, TEXT_COLOR1):
+                        return
+        
+        Top_5 = get_top_5()
+        
+        # Display the top 5 stocks
+        font = pg.font.Font(None, 36)  # Use a default font and size 36
+        y_offset = 100  # Starting y position for the first stock
+        for name, value in Top_5:
+            text_surface = font.render(f"{name}: {value}", True, (0, 0, 0))  # Render text in black color
+            screen.blit(text_surface, (50, y_offset))  # Display text at (50, y_offset)
+            y_offset += 40  # Move to the next line
+
+        draw(screen, sort_info, None, None, 'Analyze')
+        pg.display.update()
+        clock.tick(60)
+
+def get_top_5():
+    return top_5_stocks
+
+
+
+def initialize_buttons(screen, sort_info):
+    gen_menu_buttons(screen, sort_info)
 
 
 def main():
-    global gs, visual_buttons_group, menu_buttons_part1_group, stats_group, menu_buttons_part2_group, menu_buttons_part3_group, menu_buttons_part4_group
-    gs = GS()  # Initialize the game state
-    
-    # Initialize images
-    images = Images()
+    screen = initialize_pygame()
+    clock = pg.time.Clock()
+    sort_info = SortInfo()
 
-    # initialize the buttons for the menu part 1
-    menu_buttons_part1 = gen_menu_buttons_part1(images)
-    menu_buttons_part1_group = pg.sprite.Group(menu_buttons_part1)
+    initialize_buttons(screen, sort_info)
 
-    menu_display_1(images)
-
-    # initialize the buttons for the menu part 2
-    menu_buttons_part2 = gen_menu_buttons_part2(images)
-    menu_buttons_part2_group = pg.sprite.Group(menu_buttons_part2)
-
-    menu_display_2(images)
-
-    # initialize the buttons for the menu part 3
-    menu_buttons_part3 = gen_menu_buttons_part3(images)
-    menu_buttons_part3_group = pg.sprite.Group(menu_buttons_part3)
-
-    menu_display_3(images)
-
-    if(gs.show_visuals == 'Yes'):
-        # initialize the buttons for the menu part 4
-        menu_buttons_part4 = gen_menu_buttons_part4(images)
-        menu_buttons_part4_group = pg.sprite.Group(menu_buttons_part4)
-
-        menu_display_4(images)
-        # Initialize the buttons for sorting display
-        visual_buttons = gen_visual_buttons(images)
-        visual_buttons_group = pg.sprite.Group(visual_buttons)
-
-        sort_display(images)
-    else:
-        Calculate_Statistics()
-
-    # initialize the buttons for statistics display
-    stats_visible = gen_button_stats(images)
-    stats_group = pg.sprite.Group(stats_visible)
-
-    Display_Statistics()
+    while True:
+        menu_display(screen, sort_info, clock)
+        gen_starting_list(sort_info)
+        sort(screen, sort_info, clock)
+        Analytics_screen(screen, sort_info, clock)
 
 if __name__ == "__main__":
     main()
