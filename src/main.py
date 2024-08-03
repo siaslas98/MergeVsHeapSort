@@ -51,9 +51,7 @@ def initialize_pygame():
 
 
 def gen_starting_list(sort_info):
-    if sort_info.date and sort_info.selected_attribute:
-        stock_data = load_data(sort_info.date, '../Stocks')  # Load data with date filtering
-        sort_info.list = stock_data[:n]
+    sort_info.list = [generate_random_stock(company_names[i]) for i in range(100000)]
 
 
 # Reference button.py for more info
@@ -189,6 +187,8 @@ def Analytics_screen(screen, sort_info, clock):
         clock.tick(60)
 
 def loading_display(screen, sort_info, clock):
+    loading_complete = False
+
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -199,6 +199,14 @@ def loading_display(screen, sort_info, clock):
         screen.blit(Loading_dialogue, (loading_text_x, loading_text_y))
         pg.display.update()
         clock.tick(60)
+
+        if loading_complete:
+            return
+
+        gen_starting_list(sort_info)
+        loading_complete = True
+        for stock in sort_info.list:
+            print(stock)
 
 
 def initialize_buttons(screen, sort_info):
@@ -213,7 +221,6 @@ def main():
     move_to_loading_screen = menu_display(screen, sort_info, clock)
     if move_to_loading_screen:
         loading_display(screen, sort_info, clock)
-    gen_starting_list(sort_info)
 
     while True:
         menu_display(screen, sort_info, clock)
