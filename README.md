@@ -16,11 +16,11 @@ cd MergeVsHeapSort
 ```
 
 ### 2. Create a virtual environment
--python -m venv venv
--source venv/bin/activate   # On Windows: venv\Scripts\activate
+- python -m venv venv
+- source venv/bin/activate   # On Windows: venv\Scripts\activate
 
 ### 3.) Install the required packages
--pip install -r requirement.txt
+- pip install -r requirement.txt
 
 ### 4.) Run the main script
 - cd src

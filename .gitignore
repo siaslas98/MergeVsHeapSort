@@ -16,3 +16,6 @@ venv/
 *.log
 *.tmp
 
+# New virtual enviroment made for running in the CLI
+new_venv/
+
