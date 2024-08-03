@@ -174,7 +174,7 @@ def Analytics_screen(screen, sort_info, clock):
             elif event.type == pg.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
                 for btn in sort_info.analyze_buttons_group:
-                    if btn.rect.collidepoint(mouse_pos) and btn.update(FONT2, TEXT_COLOR1):
+                    if btn.rect.collidepoint(mouse_pos):
                         return
         
         Top_5 = get_top_5()
