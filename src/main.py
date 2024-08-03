@@ -30,6 +30,7 @@ class SortInfo:
         self.sort_buttons_group = pg.sprite.Group()
         self.order_buttons_group = pg.sprite.Group()
         self.attribute_buttons_group = pg.sprite.Group()
+        self.analyze_buttons_group = pg.sprite.Group()
         self.input_box_group = pg.sprite.Group()
         self.boxes = pg.sprite.Group()  # This is for testing a tree based representation
         self.nodes = pg.sprite.Group()  # This is for testing a tree based representation
@@ -95,6 +96,17 @@ def gen_menu_buttons(screen, sort_info):
         button = Button(screen, sort_info, name, pos[0], pos[1], SCALE, ELEVATION)
         sort_info.attribute_buttons_group.add(button)
 
+# ******************************************************************
+
+    analyze_buttons = [
+        ('Main Menu', MAIN_MENU_BUTTON_POSITION)
+    ]
+    
+    for name, pos in analyze_buttons:
+        button = Button(screen, sort_info, name, pos[0], pos[1], SCALE, ELEVATION)
+        sort_info.analyze_buttons_group.add(button)
+# ******************************************************************
+
 
 def menu_display(screen, sort_info, clock):
     while True:
@@ -148,6 +160,35 @@ def menu_display(screen, sort_info, clock):
         draw(screen, sort_info)  # Updated draw call
         pg.display.update()
         clock.tick(60)
+        
+def get_top_5():
+    return top_5_stocks
+
+def Analytics_screen(screen, sort_info, clock):
+    while True:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pg.quit()
+                sys.exit()
+            elif event.type == pg.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+                for btn in sort_info.analyze_buttons_group:
+                    if btn.rect.collidepoint(mouse_pos) and btn.update(FONT2, TEXT_COLOR1):
+                        return
+        
+        Top_5 = get_top_5()
+        
+        # Display the top 5 stocks
+        font = pg.font.Font(None, 36)  # Use a default font and size 36
+        y_offset = 100  # Starting y position for the first stock
+        for name, value in Top_5:
+            text_surface = font.render(f"{name}: {value}", True, (0, 0, 0))  # Render text in black color
+            screen.blit(text_surface, (50, y_offset))  # Display text at (50, y_offset)
+            y_offset += 40  # Move to the next line
+
+        draw(screen, sort_info, None, None, 'Analyze')
+        pg.display.update()
+        clock.tick(60)
 
 
 def initialize_buttons(screen, sort_info):
@@ -159,8 +200,12 @@ def main():
     clock = pg.time.Clock()
     sort_info = SortInfo()
     initialize_buttons(screen, sort_info)
-    menu_display(screen, sort_info, clock)
-    gen_starting_list(sort_info)
+
+    while True:
+        menu_display(screen, sort_info, clock)
+        gen_starting_list(sort_info)
+        sort(screen, sort_info, clock)
+        Analytics_screen(screen, sort_info, clock)
 
 
 if __name__ == "__main__":
