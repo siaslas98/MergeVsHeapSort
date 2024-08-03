@@ -50,7 +50,7 @@ def initialize_pygame():
 
 
 def gen_starting_list(sort_info):
-    sort_info.list = [generate_random_stock(company_names[i]) for i in range(100000)]
+    sort_info.list = [generate_random_stock(company_names[i]) for i in range(n)]  # n == 100000
 
 
 # Reference button.py for more info
@@ -91,7 +91,7 @@ def gen_menu_buttons(screen, sort_info):
         button = Button(screen, sort_info, name, pos[0], pos[1], SCALE, ELEVATION)
         sort_info.attribute_buttons_group.add(button)
 
-# ******************************************************************
+    # ******************************************************************
 
     analyze_buttons = [
         ('Main Menu', MAIN_MENU_BUTTON_POSITION)
@@ -100,7 +100,7 @@ def gen_menu_buttons(screen, sort_info):
     for name, pos in analyze_buttons:
         button = Button(screen, sort_info, name, pos[0], pos[1], SCALE, ELEVATION)
         sort_info.analyze_buttons_group.add(button)
-# ******************************************************************
+    # ******************************************************************
 
 
 def menu_display(screen, sort_info, clock):
@@ -113,7 +113,6 @@ def menu_display(screen, sort_info, clock):
             # If mouse inside borders of button and pressed
             if event.type == pg.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
-
                 for btn in sort_info.menu_buttons_group:
                     if btn.rect.collidepoint(mouse_pos) and btn.update(FONT2, TEXT_COLOR1):
                         if btn.name == 'Order':

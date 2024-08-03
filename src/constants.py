@@ -82,8 +82,7 @@ analyze_tips_x = WINDOWSIZE[0] / 2 - Analyze_tips.get_width()/2
 analyze_tips_y = analyze_title_y + Analyze_Title.get_height() + TITLE_TO_TIPS_OFFSET
 
 # Sorting
-# n = 31 for trees
-n = 100  # for bars
+n = 100000
 
 # Box Attributes + Node Attributes(Ignore this)
 STARTING_X = 50

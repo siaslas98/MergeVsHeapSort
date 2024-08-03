@@ -36,7 +36,7 @@ company_names = [
     "Rio Tinto", "Ericsson", "Heineken", "Stryker", "SABIC", "ABB", "WPP", "SK Hynix", "Kroger", "Sysco", "HP"
 ]
 
-while len(company_names) < 100:
+while len(company_names) < n:
     company_names.extend(company_names)
 
 
@@ -49,32 +49,3 @@ def generate_random_stock(name):
     volume = random.randint(1000, 10000)
     openInt = random.randint(1000, 10000)
     return Stock(name, open_price, high_price, low_price, close_price, volume, openInt)
-
-
-stock_list = [generate_random_stock(company_names[i]) for i in range(100)]
-
-
-# Setup sort_info
-class SortInfo:
-    def __init__(self, stock_list):
-        self.list = stock_list
-
-
-sort_info = SortInfo(stock_list)
-
-
-# Define screen and clock (for illustration purposes, not used in this example)
-screen = None
-clock = None
-
-# Perform heap sort based on the 'close' attribute
-comparator = Stock.get_comparator('close', ascending=True)
-# heap_sort(screen, clock, sort_info, comparator)
-timsort(screen, sort_info, comparator)
-
-# Display the generated stock objects
-for i in range(n-1):
-    print(stock_list[i].close)
-    if stock_list[i].close > stock_list[i+1].close:
-        print("Not in order")
-        break
