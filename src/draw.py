@@ -46,6 +46,9 @@ def draw_buttons(screen, sort_info, btn_type):
     elif btn_type == 'attribute':
         for button in sort_info.attribute_buttons_group:
             button.update(FONT2, TEXT_COLOR1)
+    elif btn_type == 'Analyze':
+        for button in sort_info.analyze_buttons_group:
+            button.update(FONT2, TEXT_COLOR1)
 
 
 def draw_bars(screen, bars, new_ele_idx=None):
@@ -59,7 +62,7 @@ def draw_bars(screen, bars, new_ele_idx=None):
         pg.draw.rect(screen, 'Blue', bar, 1)
 
 
-def draw(screen, sort_info, bars=None, new_ele_idx=None):
+def draw(screen, sort_info, bars=None, new_ele_idx=None, Category = None):
 
     if bars is not None:
         screen.fill(BACKGROUND_COLOR)
@@ -68,6 +71,13 @@ def draw(screen, sort_info, bars=None, new_ele_idx=None):
         draw_bars(screen, bars, new_ele_idx)
         # draw_buttons(screen, sort_info, btn_type='sort')
 
+    elif (Category == 'Analyze'):
+        screen.fill(BACKGROUND_COLOR)
+        screen.blit(Analyze_Title, (analyze_title_x, analyze_title_y))
+        screen.blit(Analyze_tips, (analyze_tips_x, analyze_tips_y))
+        screen.blit()
+        screen.blit()
+        draw_buttons(screen, sort_info, btn_type='Analyze')
     else:
         screen.fill(BACKGROUND_COLOR)
         screen.blit(Menu_Title, (controls_menu, 5))
