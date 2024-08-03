@@ -26,6 +26,8 @@ class SortInfo:
         self.top_5 = None
         self.date = ""
         self.list = []  # List  of stock data objects to perform sorting on
+        self.heap_timer = None
+        self.timsort_timer = None
         self.images = Images()
         self.menu_buttons_group = pg.sprite.Group()
         self.sort_buttons_group = pg.sprite.Group()
