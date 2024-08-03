@@ -66,7 +66,7 @@ def build_heap(screen, sort_info, root_pos, clock):
 ''' End of Heap building in place'''
 
 
-''' Heap sort using heap insert'''
+''' Heap sort using heap insert: This is less efficient than the in-place sorting'''
 
 
 def heap_sort(heap, sort_info):
@@ -97,9 +97,7 @@ def binary_search(arr, left, right, key, comparator):
     return left
 
 
-def binary_insertion_sort(arr, left, right, comparator, sort_info, screen, run_idx, runs, run_colors):
-    color = RUN_COLORS[run_idx % len(RUN_COLORS)]
-    run_colors.append(color)
+def binary_insertion_sort(arr, left, right, comparator, sort_info, screen):
     for i in range(left + 1, right + 1):
         key = arr[i]
         position = binary_search(arr, left, i - 1, key, comparator)
@@ -107,95 +105,43 @@ def binary_insertion_sort(arr, left, right, comparator, sort_info, screen, run_i
             arr[j] = arr[j - 1]
         arr[position] = key
 
-        # Update the runs with the current state of the array
-        current_runs = runs + [arr[left:i + 1]]  # Add the current run being processed
         min_stock = min(arr[left:right + 1], key=comparator)
         max_stock = max(arr[left:right + 1], key=comparator)
-        bars = get_bars_timsort(current_runs, arr[i + 1:], SIDE_PAD, min_stock, max_stock, sort_info.selected_attribute, run_colors)
-        if not sort_info.ascending:
-            bars = bars[::-1]
-        draw(screen, sort_info, bars)
-        pg.display.update()
-        pg.time.delay(50)
-
-    runs.append(arr[left:right + 1])
 
 
-def merge(arr, left, mid, right, comparator, sort_info, screen, run_idx, runs, run_colors):
-    color = RUN_COLORS[run_idx % len(RUN_COLORS)]
+def merge(arr, left, mid, right, comparator, sort_info, screen):
     left_array = arr[left:mid + 1]
     right_array = arr[mid + 1:right + 1]
     i = 0
     j = 0
     k = left
-    new_run = []
-
-    # Initial visualization of the runs before merging
-    runs_to_visualize = [left_array, right_array]
-    visualize_merge_step(screen, sort_info, runs_to_visualize, arr[right + 1:], comparator)
 
     while i < len(left_array) and j < len(right_array):
         if comparator(left_array[i]) <= comparator(right_array[j]):
             arr[k] = left_array[i]
-            new_run.append(left_array[i])
             i += 1
         else:
             arr[k] = right_array[j]
-            new_run.append(right_array[j])
             j += 1
         k += 1
 
-        # Visualize the current state of the merging process
-        runs_to_visualize = [left_array[i:], right_array[j:], new_run]
-        visualize_merge_step(screen, sort_info, runs_to_visualize, arr[right + 1:], comparator)
-
     while i < len(left_array):
         arr[k] = left_array[i]
-        new_run.append(left_array[i])
         k += 1
         i += 1
-
-        # Visualize the current state of the merging process
-        runs_to_visualize = [left_array[i:], new_run]
-        visualize_merge_step(screen, sort_info, runs_to_visualize, arr[right + 1:], comparator)
-
     while j < len(right_array):
         arr[k] = right_array[j]
-        new_run.append(right_array[j])
         k += 1
         j += 1
-
-        # Visualize the current state of the merging process
-        runs_to_visualize = [right_array[j:], new_run]
-        visualize_merge_step(screen, sort_info, runs_to_visualize, arr[right + 1:], comparator)
-
-    # Update the runs and run colors
-    runs.append(new_run)
-    run_colors.append(color)
-    runs[:] = [run for run in runs if run not in [left_array, right_array]]
-    if runs:
-        visualize_merge_step(screen, sort_info, runs, arr[right + 1:], comparator, final=True)
 
 
 def timsort(arr, comparator, sort_info, screen):
     array_length = len(arr)
-    run_idx = 0
-    runs = []
-    runs_colors = []
-
-    # Draw initial array
-    bars = get_bars_timsort([arr], [], SIDE_PAD, min(arr, key=comparator), max(arr, key=comparator), sort_info.selected_attribute, [RUN_COLORS[run_idx % len(RUN_COLORS)]])
-    if not sort_info.ascending:
-        bars = bars[::-1]
-    draw(screen, sort_info, bars)
-    pg.display.update()
-    pg.time.delay(1000)  # Delay to show the initial array
 
     # split array
     for start in range(0, array_length, MIN_RUN_SIZE):
         end = min(start + MIN_RUN_SIZE - 1, array_length - 1)
-        binary_insertion_sort(arr, start, end, comparator, sort_info, screen, run_idx, runs, runs_colors)
-        run_idx += 1
+        binary_insertion_sort(arr, start, end, comparator, sort_info, screen)
 
     size = MIN_RUN_SIZE
     while size < array_length:
@@ -204,19 +150,9 @@ def timsort(arr, comparator, sort_info, screen):
             right = min((left + 2 * size - 1), (array_length - 1))
 
             if mid < right:
-                merge(arr, left, mid, right, comparator, sort_info, screen, run_idx, runs, runs_colors)
-                run_idx += 1
+                merge(arr, left, mid, right, comparator, sort_info, screen)
 
         size *= 2
-
-    # Draw final sorted array
-
-    bars = get_bars_timsort([arr], [], SIDE_PAD, min(arr, key=comparator), max(arr, key=comparator), sort_info.selected_attribute, [RUN_COLORS[run_idx % len(RUN_COLORS)]])
-    if not sort_info.ascending:
-        bars = bars[::-1]
-    draw(screen, sort_info, bars)
-    pg.display.update()
-    pg.time.delay(1000)  # Delay to show the final sorted array
 
     sort_info.sort = False
     sort_info.list = arr

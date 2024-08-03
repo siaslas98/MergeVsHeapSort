@@ -7,16 +7,16 @@ from draw import *
 
 class Heap:
     # Constructor
-    def __init__(self, screen, sort_info, compartor, heap_type="min"):
+    def __init__(self, screen, sort_info, comparator, heap_type="min"):
         self.screen = screen
         self.sort_info = sort_info
         self.unsorted_arr = sort_info.list
         self.arr = []
-        self.sorted_arr = []
+        self.sorted_arr = []  # This is where the final sorted list goes
         self.buttons_group = sort_info.sort_buttons_group
         self.heap_type = heap_type
         self.size = 0
-        self.comparator = compartor
+        self.comparator = comparator
         self.min_val = min(self.unsorted_arr, key=self.comparator) if self.unsorted_arr else None
         self.max_val = max(self.unsorted_arr, key=self.comparator) if self.unsorted_arr else None
 
@@ -130,24 +130,12 @@ class Heap:
                 sys.exit()
 
             elif event.type == pg.KEYDOWN:
-                if event.key == pg.K_SPACE:
-                   sort_info.sort = not sort_info.sort
-                   print(f"Sort state changed to {sort_info.sort}")
+                if event.key == pg.K_SPACE:  # Pause sorting
+                    sort_info.sort = not sort_info.sort
 
                 if event.key == pg.K_r:  # Reset
                     sort_info.sort = False
                     sort_info.lst_sorted = False
-                    print("Reset pressed, sort_info.sort:", sort_info.sort)
-
-            elif event.type == pg.MOUSEBUTTONDOWN:
-                for btn in self.buttons_group:
-                    if btn.update(FONT1, TEXT_COLOR1):
-                        if btn.name == 'Sort' and not sort_info.sort:
-                            sort_info.sort = True
-                            print("Sort button clicked to start sorting, sort_info.sort:", sort_info.sort)
-                        elif btn.name == 'Stop' and sort_info.sort:
-                            sort_info.sort = False
-                            print("Stop button clicked to stop sorting, sort_info.sort:", sort_info.sort)
 
     def display(self, sorted_lst, unsorted_lst, new_ele_idx=None):
         bar_width = (WINDOWSIZE[0] - TOTAL_SIDE_PAD) / (self.size + len(unsorted_lst))
@@ -162,7 +150,6 @@ class Heap:
 
         draw(self.screen, self.sort_info, bars, new_ele_idx)
         vert_space = (WINDOWSIZE[1] - TOP_PADDING) - (WINDOWSIZE[1] - sorting_bottom)
-        pg.draw.line(self.screen, 'Orange', (unsorted_start_x, sorting_bottom), (unsorted_start_x, 5), 4)
         pg.display.update()
 
 
