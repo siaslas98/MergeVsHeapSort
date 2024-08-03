@@ -23,6 +23,7 @@ class SortInfo:
         self.lst_sorted = False
         self.selected_order = None
         self.selected_attribute = None
+        self.top_5 = None
         self.date = ""
         self.list = []  # List  of stock data objects to perform sorting on
         self.images = Images()
@@ -161,8 +162,8 @@ def menu_display(screen, sort_info, clock):
         pg.display.update()
         clock.tick(60)
         
-def get_top_5():
-    return top_5_stocks
+def get_top_5(sort_info):
+    return sort_info.top_5
 
 def Analytics_screen(screen, sort_info, clock):
     while True:
