@@ -14,6 +14,7 @@ from draw import *
 from calculations import *
 from stock import *
 
+
 class SortInfo:
     def __init__(self):
         self.sort = False
@@ -34,8 +35,6 @@ class SortInfo:
         self.attribute_buttons_group = pg.sprite.Group()
         self.analyze_buttons_group = pg.sprite.Group()
         self.input_box_group = pg.sprite.Group()
-        self.boxes = pg.sprite.Group()  # This is for testing a tree based representation
-        self.nodes = pg.sprite.Group()  # This is for testing a tree based representation
         self.heap = None
         self.bars = None
         self.sort_dropdown_expanded = False
