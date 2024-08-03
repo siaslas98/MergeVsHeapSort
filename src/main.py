@@ -144,19 +144,22 @@ def menu_display(screen, sort_info, clock):
                             sort_info.selected_attribute = btn.name
                             sort_info.attribute_dropdown_expanded = False
 
-        if sort_info.selected_order and sort_info.selected_attribute:
-            # submit button can now have functionality
-            for btn in sort_info.menu_buttons_group:
-                if btn.rect.collidepoint(mouse_pos):
-                    if btn.name == 'Sort!':
-                        return True
+                if sort_info.selected_order and sort_info.selected_attribute:
+                    # submit button can now have functionality
+                    pass
+                for btn in sort_info.menu_buttons_group:
+                    if btn.rect.collidepoint(mouse_pos):
+                        if btn.name == 'Sort!':
+                            return True
 
         draw(screen, sort_info)  # Updated draw call
         pg.display.update()
         clock.tick(60)
-        
+
+
 def get_top_5(sort_info):
     return sort_info.top_5
+
 
 def Analytics_screen(screen, sort_info, clock):
     while True:
@@ -170,7 +173,7 @@ def Analytics_screen(screen, sort_info, clock):
                     if btn.rect.collidepoint(mouse_pos):
                         return
         
-        Top_5 = get_top_5()
+        Top_5 = get_top_5(sort_info)
         
         # Display the top 5 stocks
         font = pg.font.Font(None, 36)  # Use a default font and size 36
@@ -222,8 +225,7 @@ def main():
 
     while True:
         menu_display(screen, sort_info, clock)
-        gen_starting_list(sort_info)
-        sort(screen, sort_info, clock)
+        # sort(screen, sort_info, clock)
         Analytics_screen(screen, sort_info, clock)
 
 
