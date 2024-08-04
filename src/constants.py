@@ -1,4 +1,5 @@
 import pygame as pg
+
 def draw_text_with_outline(screen, font, text, x, y, main_color, outline_color, outline_width=1):
     text_surface = font.render(text, True, main_color)
     outline_surfaces = []
