@@ -220,15 +220,8 @@ def loading_display(screen, sort_info, clock, reuse = 0):
         if (reuse == 0):
             gen_starting_list(sort_info)
 
-        print ("Before")
-        for i in range(n):
-            print (sort_info.list[i])
-
         sort_off_attribute(sort_info.selected_attribute, sort_info)
-
-        print ("After")
-        for i in range(n):
-            print (sort_info.list[i])
+        print(sort_info.list)
 
         if sort_info.selected_order == "Descending":
             handle_descending(sort_info)

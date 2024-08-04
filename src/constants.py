@@ -118,7 +118,7 @@ analyze_tips_y = analyze_title_y + Analyze_Title_fake.get_height() + TITLE_TO_TI
 
 
 # Sorting
-n = 10
+n = 5
 
 # Box Attributes + Node Attributes(Ignore this)
 STARTING_X = 50

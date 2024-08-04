@@ -76,8 +76,10 @@ def handle_descending(sort_info):
 
 
 def set_top_5(attribute, sort_info):
+    num = n-5
     for stock in range(0, 5):
-        sort_info.top_5[stock] = (sort_info.list[stock].name, get_attribute(attribute, sort_info, stock))
+        sort_info.top_5[4 - stock] = (sort_info.list[num].name, get_attribute(attribute, sort_info, num))
+        num += 1
 
 
 def get_attribute(attribute, sort_info, n):
