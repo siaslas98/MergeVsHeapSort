@@ -1,15 +1,4 @@
 import pygame as pg
-def draw_text_with_outline(screen, font, text, x, y, main_color, outline_color, outline_width=1):
-    text_surface = font.render(text, True, main_color)
-    outline_surfaces = []
-    for dx, dy in [(-outline_width, -outline_width), (-outline_width, outline_width), (outline_width, -outline_width), (outline_width, outline_width)]:
-        outline_surface = font.render(text, True, outline_color)
-        outline_surfaces.append((outline_surface, (x + dx, y + dy)))
-    
-    for outline_surface, (ox, oy) in outline_surfaces:
-        screen.blit(outline_surface, (ox, oy))
-    
-    screen.blit(text_surface, (x, y))
 
 pg.init()
 
@@ -31,7 +20,7 @@ CURRENT = 'Blue'
 UNSORTED = [(200, 200, 200), (128, 128, 128), (50, 50, 50)]
 
 # Background image
-BACKGROUND_IMAGE_PATH = 'imgs/Backgrounds/Cash.jpg'
+BACKGROUND_IMAGE_PATH = '../imgs/Backgrounds/Cash.jpg'
 TEMP = pg.image.load(BACKGROUND_IMAGE_PATH)
 BACKGROUND_IMAGE = pg.transform.scale(TEMP, WINDOWSIZE)
 
@@ -67,7 +56,7 @@ MAIN_MENU_BUTTON_POSITION = (MAIN_MENU_BUTTON[0], MAIN_MENU_BUTTON[1])
 
 # Image Dictionary
 # Key is path, value is reference name
-IMAGE_DICT = {'imgs/Blank.png': 'Blank'}
+IMAGE_DICT = {'../imgs/Blank.png': 'Blank'}
 
 # Additional button attributes
 SCALE = 1

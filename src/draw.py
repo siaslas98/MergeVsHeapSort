@@ -130,3 +130,16 @@ def disp_message(screen, text, font, color, x, y):
     message = font.render(text, True, color)
     message_rect = message.get_rect(center=(x, y))
     screen.blit(message, message_rect)
+
+
+def draw_text_with_outline(screen, font, text, x, y, main_color, outline_color, outline_width=1):
+    text_surface = font.render(text, True, main_color)
+    outline_surfaces = []
+    for dx, dy in [(-outline_width, -outline_width), (-outline_width, outline_width), (outline_width, -outline_width), (outline_width, outline_width)]:
+        outline_surface = font.render(text, True, outline_color)
+        outline_surfaces.append((outline_surface, (x + dx, y + dy)))
+
+    for outline_surface, (ox, oy) in outline_surfaces:
+        screen.blit(outline_surface, (ox, oy))
+
+    screen.blit(text_surface, (x, y))
