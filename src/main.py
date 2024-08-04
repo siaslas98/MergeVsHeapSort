@@ -254,6 +254,5 @@ def main():
                 move_to_analytics_screen = False
 
 
-
 if __name__ == "__main__":
     main()

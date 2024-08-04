@@ -2,45 +2,16 @@ import pygame as pg
 from constants import *
 from bars import get_bars_timsort
 
-''' draw_heap is for tree-based representation'''
-
-
-def draw_heap(screen, sort_info, highlight=None, intermediate_positions=None):
-    # Clear the screen before drawing
-    screen.fill('light blue')
-
-    for box in sort_info.boxes:
-        box.draw()
-
-    for node in sort_info.nodes:
-        left_idx = 2 * node.idx + 1
-        right_idx = 2 * node.idx + 2
-        if left_idx < n:
-            pg.draw.line(screen, 'black', node.center, sort_info.nodes[left_idx].center, 2)
-        if right_idx < n:
-            pg.draw.line(screen, 'black', node.center, sort_info.nodes[right_idx].center, 2)
-    for node in sort_info.nodes:
-        border_color = 'red' if highlight and node.idx in highlight else 'black'
-        node.draw(border_color=border_color)
-
-    # Draw the moving values
-    if intermediate_positions:
-        for idx, pos in intermediate_positions.items():
-            node_val_surf = FONT3.render(str(sort_info.nodes[idx].val), True, 'black')
-            node_val_rect = node_val_surf.get_rect(center=pos)
-            screen.blit(node_val_surf, node_val_rect)
-
-    pg.display.update()
 
 def draw_bar_graph(sort_info, screen, x, y, width, height, values):
-    
+
     # Draw the background of the graph as a white rectangle
     pg.draw.rect(screen, (255, 255, 255), (x, y, width, height))
-    
+
     # Calculate the width of each bar
     bar_width = width // len(values)
     max_value = max(values)
-    
+
     # Draw each bar
     for i in range(len(values)):
         # Ensure a minimum height of 1 for visibility
@@ -48,9 +19,10 @@ def draw_bar_graph(sort_info, screen, x, y, width, height, values):
         bar_x = x + i * bar_width
         bar_y = y + (height - bar_height)
         pg.draw.rect(screen, (247, 210, 57), (bar_x, bar_y, bar_width, bar_height))
-    
+
     # Update the display
     pg.display.flip()
+
 
 def draw_buttons(screen, sort_info, btn_type):
     if btn_type == 'menu':
@@ -70,16 +42,6 @@ def draw_buttons(screen, sort_info, btn_type):
             button.update(FONT2, TEXT_COLOR1)
 
 
-def draw_bars(screen, bars, new_ele_idx=None):
-    for i, (bar, color) in enumerate(bars):
-        if i == new_ele_idx:
-            bar_color = (255, 0, 0)
-        else:
-            bar_color = color if color else UNSORTED[i % 3]
-
-        pg.draw.rect(screen, bar_color, bar)
-        pg.draw.rect(screen, 'Blue', bar, 1)
-
 def draw_Analysis_results(screen, sort_info):
     screen.blit(BACKGROUND_IMAGE, (0,0))
     draw_text_with_outline(screen, FONT2, "Results", analyze_title_x, analyze_title_y, pg.Color('black'), pg.Color('white'), 2)
@@ -93,16 +55,9 @@ def draw_Analysis_results(screen, sort_info):
     draw_text_with_outline(screen, FONT2, f"TimSort: {sort_info.timsort_timer}", (WINDOWSIZE[0]/4), 150 + 50 * 7, pg.Color('black'), pg.Color('white'), 2)
 
 
-def draw(screen, sort_info, bars=None, new_ele_idx=None, Category = None):
+def draw(screen, sort_info, bars=None, new_ele_idx=None, Category=None):
 
-    if bars is not None:
-        screen.blit(BACKGROUND_IMAGE, (0,0))
-        pg.draw.rect(screen, (169, 173, 76), (0, 0, WINDOWSIZE[0], sorting_bottom + 4), 4, 1)
-        # pg.draw.line(screen, (169, 173, 76), (0, 100), (1800, 100), 4)
-        draw_bars(screen, bars, new_ele_idx)
-        # draw_buttons(screen, sort_info, btn_type='sort')
-
-    elif (Category == 'Analyze'):
+    if Category == 'Analyze':
         draw_Analysis_results(screen, sort_info)
         draw_buttons(screen, sort_info, btn_type='Analyze')
     else:
