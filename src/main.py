@@ -214,6 +214,7 @@ def main():
             move_to_analytics_screen = loading_display(screen, sort_info, clock)
             if move_to_analytics_screen:
                 analytics_screen(screen, sort_info, clock)
+                move_to_analytics_screen = False
 
 
 if __name__ == "__main__":
