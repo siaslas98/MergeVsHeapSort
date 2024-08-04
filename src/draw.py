@@ -61,6 +61,16 @@ def draw_bars(screen, bars, new_ele_idx=None):
         pg.draw.rect(screen, bar_color, bar)
         pg.draw.rect(screen, 'Blue', bar, 1)
 
+def draw_Analysis_results(screen, sort_info):
+    screen.fill(BACKGROUND_COLOR)
+    screen.blit(Analyze_Title, (analyze_title_x, analyze_title_y))
+    screen.blit(Analyze_tips, (analyze_tips_x, analyze_tips_y))
+    
+    names, values = zip(*sort_info.top_5)
+    for i in range(5):
+        text_surface = FONT2.render(f"{names[i]}: {values[i]}", True, pg.Color('white'))  # Render text in black color
+        screen.blit(text_surface, ((WINDOWSIZE[0]/2), 100 + 50 * i))
+
 
 def draw(screen, sort_info, bars=None, new_ele_idx=None, Category = None):
 
@@ -72,11 +82,7 @@ def draw(screen, sort_info, bars=None, new_ele_idx=None, Category = None):
         # draw_buttons(screen, sort_info, btn_type='sort')
 
     elif (Category == 'Analyze'):
-        screen.fill(BACKGROUND_COLOR)
-        screen.blit(Analyze_Title, (analyze_title_x, analyze_title_y))
-        screen.blit(Analyze_tips, (analyze_tips_x, analyze_tips_y))
-        screen.blit()
-        screen.blit()
+        draw_Analysis_results(screen, sort_info)
         draw_buttons(screen, sort_info, btn_type='Analyze')
     else:
         screen.fill(BACKGROUND_COLOR)

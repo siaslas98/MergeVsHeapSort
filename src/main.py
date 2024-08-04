@@ -155,10 +155,6 @@ def menu_display(screen, sort_info, clock):
         clock.tick(60)
 
 
-def get_top_5(sort_info):
-    return sort_info.top_5
-
-
 def analytics_screen(screen, sort_info, clock):
     while True:
         for event in pg.event.get():
@@ -170,16 +166,6 @@ def analytics_screen(screen, sort_info, clock):
                 for btn in sort_info.analyze_buttons_group:
                     if btn.rect.collidepoint(mouse_pos):
                         return
-        
-        Top_5 = get_top_5(sort_info)
-        
-        # Display the top 5 stocks
-        font = pg.font.Font(None, 36)  # Use a default font and size 36
-        y_offset = 100  # Starting y position for the first stock
-        for name, value in Top_5:
-            text_surface = font.render(f"{name}: {value}", True, (0, 0, 0))  # Render text in black color
-            screen.blit(text_surface, (50, y_offset))  # Display text at (50, y_offset)
-            y_offset += 40  # Move to the next line
 
         draw(screen, sort_info, None, None, 'Analyze')
         pg.display.update()
@@ -222,11 +208,12 @@ def main():
     clock = pg.time.Clock()
     sort_info = SortInfo()
     initialize_buttons(screen, sort_info)
-    move_to_loading_screen = menu_display(screen, sort_info, clock)
-    if move_to_loading_screen:
-        move_to_analytics_screen = loading_display(screen, sort_info, clock)
-        if move_to_analytics_screen:
-            analytics_screen(screen, sort_info, clock)
+    while(True):
+        move_to_loading_screen = menu_display(screen, sort_info, clock)
+        if move_to_loading_screen:
+            move_to_analytics_screen = loading_display(screen, sort_info, clock)
+            if move_to_analytics_screen:
+                analytics_screen(screen, sort_info, clock)
 
 
 if __name__ == "__main__":
