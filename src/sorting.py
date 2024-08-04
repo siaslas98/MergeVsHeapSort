@@ -9,7 +9,7 @@ from constants import n
 ''' Heap building in place'''
 
 
-def heapify(screen, clock, sort_info, parent, comparator):
+def heapify(sort_info, parent, comparator):
 
     arr = sort_info.list
 
@@ -28,15 +28,15 @@ def heapify(screen, clock, sort_info, parent, comparator):
     # If largest is not root
     if largest != parent:
         arr[parent], arr[largest] = arr[largest], arr[parent]  # Swap
-        heapify(screen, clock, sort_info, largest, comparator)
+        heapify(sort_info, largest, comparator)
 
 
-def build_heap(screen, clock, sort_info, comparator):
+def build_heap(sort_info, comparator):
     for idx in range(n // 2 - 1, -1, -1):
-        heapify(screen, clock, sort_info, idx, comparator)
+        heapify(sort_info, idx, comparator)
 
 
-def extract_max(screen, clock, sort_info, comparator):
+def extract_max(sort_info, comparator):
     global n
     arr = sort_info.list
     for idx in range(n-1, 0, -1):
@@ -44,12 +44,12 @@ def extract_max(screen, clock, sort_info, comparator):
 
         n -= 1
 
-        heapify(screen, clock, sort_info, 0, comparator)
+        heapify(sort_info, 0, comparator)
 
 
-def heap_sort(screen, clock, sort_info, comparator):
-    build_heap(screen, clock, sort_info, comparator)
-    extract_max(screen, clock, sort_info, comparator)
+def heap_sort(sort_info, comparator):
+    build_heap(sort_info, comparator)
+    extract_max(sort_info, comparator)
 
 
 ''' End of Heap building in place'''
@@ -75,7 +75,7 @@ def heap_sort2(heap, sort_info):
 ''' Tim Sort '''
 
 
-def binary_insertion_sort(screen, sort_info, start, end, comparator):
+def binary_insertion_sort(sort_info, start, end, comparator):
     arr = sort_info.list
     for i in range(start + 1, end + 1):
         key = arr[i]
@@ -121,13 +121,13 @@ def merge(arr, left, mid, right, comparator, sort_info, screen):
         j += 1
 
 
-def timsort(screen, sort_info, comparator):
+def timsort(sort_info, comparator):
     arr = sort_info.list
 
     # Split array into runs and sort each run using binary insertion sort
     for start in range(0, n, MIN_RUN_SIZE):
         end = min(start + MIN_RUN_SIZE - 1, n - 1)
-        binary_insertion_sort(screen, sort_info, start, end, comparator)
+        binary_insertion_sort(sort_info, start, end, comparator)
 
     size = MIN_RUN_SIZE
     while size < n:
@@ -136,7 +136,7 @@ def timsort(screen, sort_info, comparator):
             right = min((left + 2 * size - 1), (n - 1))
 
             if mid < right:
-                merge(arr, left, mid, right, comparator, sort_info, screen)
+                merge(arr, left, mid, right, comparator, sort_info)
 
         size *= 2
 

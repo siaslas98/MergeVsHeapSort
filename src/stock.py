@@ -1,6 +1,7 @@
 import random
 import string
 from sorting import *
+from timer import *
 
 class Stock:
     def __init__(self, name, open, high, low, close, volume, openInt):
@@ -49,3 +50,56 @@ def generate_random_stock(name):
     volume = random.randint(1000, 10000)
     openInt = random.randint(1000, 10000)
     return Stock(name, open_price, high_price, low_price, close_price, volume, openInt)
+
+
+def sort_helper(sort_info, attribute):
+    timer_1 = Timer()
+    timer_2 = Timer()
+    comparator = Stock.get_comparator(attribute)
+    timer_1.start()
+    heap_sort(sort_info, comparator)
+    timer_1.stop()
+    sort_info.heap_timer = timer_1.get_value()
+    timer_2.start()
+    timsort(sort_info, comparator)
+    timer_2.stop()
+    sort_info.timsort_timer = timer_2.get_value()
+
+
+def handle_descending(sort_info):
+    sort_info.list.reverse()
+
+
+def set_top_5(attribute, sort_info):
+    for stock in range(0, 5):
+        sort_info.top_5[stock] = (sort_info.list[stock].name, get_attribute(attribute, sort_info, stock))
+
+
+def get_attribute(attribute, sort_info, n):
+    if attribute == "Open":
+        return sort_info.list[n].open
+    elif attribute == "High":
+        return sort_info.list[n].high
+    elif attribute == "Low":
+        return sort_info.list[n].low
+    elif attribute == "Close":
+        return sort_info.list[n].close
+    elif attribute == "Volume":
+        return sort_info.list[n].volume
+    elif attribute == "OpenInt":
+        return sort_info.list[n].openInt
+
+
+def sort_off_attribute(attribute, sort_info):
+    if attribute == "Open":
+        sort_helper(sort_info, 'open')
+    elif attribute == "High":
+        sort_helper(sort_info, 'high')
+    elif attribute == "Low":
+        sort_helper(sort_info, 'low')
+    elif attribute == "Close":
+        sort_helper(sort_info, 'close')
+    elif attribute == "Volume":
+        sort_helper(sort_info, 'volume')
+    elif attribute == "OpenInt":
+        sort_helper(sort_info, 'openInt')

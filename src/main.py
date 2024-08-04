@@ -19,11 +19,10 @@ class SortInfo:
     def __init__(self):
         self.sort = False
         self.click = False
-        self.ascending = True
         self.lst_sorted = False
         self.selected_order = None
         self.selected_attribute = None
-        self.top_5 = None
+        self.top_5 = [0, 0, 0, 0, 0]
         self.date = ""
         self.list = []  # List  of stock data objects to perform sorting on
         self.heap_timer = None
@@ -131,7 +130,6 @@ def menu_display(screen, sort_info, clock):
                                 if parentBtn.name == 'Order':
                                     parentBtn.change_button_name(btn.name)
                             sort_info.selected_order = btn.name
-                            sort_info.ascending = (btn.name == 'Ascending')
                             sort_info.order_dropdown_expanded = False
 
                 # This sets the attributes for the stock objects
@@ -161,7 +159,7 @@ def get_top_5(sort_info):
     return sort_info.top_5
 
 
-def Analytics_screen(screen, sort_info, clock):
+def analytics_screen(screen, sort_info, clock):
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -187,6 +185,7 @@ def Analytics_screen(screen, sort_info, clock):
         pg.display.update()
         clock.tick(60)
 
+
 def loading_display(screen, sort_info, clock):
     loading_complete = False
 
@@ -202,12 +201,16 @@ def loading_display(screen, sort_info, clock):
         clock.tick(60)
 
         if loading_complete:
-            return
+            return True
 
         gen_starting_list(sort_info)
+        sort_off_attribute(sort_info.selected_attribute, sort_info)
+
+        if sort_info.selected_order == "Descending":
+            handle_descending(sort_info)
+
+        set_top_5(sort_info.selected_attribute, sort_info)
         loading_complete = True
-        for stock in sort_info.list:
-            print(stock)
 
 
 def initialize_buttons(screen, sort_info):
@@ -221,12 +224,9 @@ def main():
     initialize_buttons(screen, sort_info)
     move_to_loading_screen = menu_display(screen, sort_info, clock)
     if move_to_loading_screen:
-        loading_display(screen, sort_info, clock)
-
-    while True:
-        menu_display(screen, sort_info, clock)
-        # sort(screen, sort_info, clock)
-        Analytics_screen(screen, sort_info, clock)
+        move_to_analytics_screen = loading_display(screen, sort_info, clock)
+        if move_to_analytics_screen:
+            analytics_screen(screen, sort_info, clock)
 
 
 if __name__ == "__main__":
