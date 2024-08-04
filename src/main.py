@@ -40,6 +40,28 @@ class SortInfo:
         self.order_dropdown_expanded = False
         self.attribute_dropdown_expanded = False
 
+    def reset(self):
+        self.sort = False
+        self.click = False
+        self.lst_sorted = False
+        self.selected_order = None
+        self.selected_attribute = None
+        self.top_5 = [0, 0, 0, 0, 0]
+        self.date = ""
+        self.heap_timer = None
+        self.timsort_timer = None
+        self.images = Images()
+        self.menu_buttons_group = pg.sprite.Group()
+        self.sort_buttons_group = pg.sprite.Group()
+        self.order_buttons_group = pg.sprite.Group()
+        self.attribute_buttons_group = pg.sprite.Group()
+        self.analyze_buttons_group = pg.sprite.Group()
+        self.input_box_group = pg.sprite.Group()
+        self.heap = None
+        self.bars = None
+        self.sort_dropdown_expanded = False
+        self.order_dropdown_expanded = False
+        self.attribute_dropdown_expanded = False
 
 def initialize_pygame():
     pg.init()
@@ -172,7 +194,7 @@ def analytics_screen(screen, sort_info, clock):
         clock.tick(60)
 
 
-def loading_display(screen, sort_info, clock):
+def loading_display(screen, sort_info, clock, reuse = 0):
     loading_complete = False
 
     while True:
@@ -186,8 +208,18 @@ def loading_display(screen, sort_info, clock):
         pg.display.update()
         clock.tick(60)
 
-        gen_starting_list(sort_info)
+        if (reuse == 0):
+            gen_starting_list(sort_info)
+
+        print ("Before")
+        for i in range(n):
+            print (sort_info.list[i])
+
         sort_off_attribute(sort_info.selected_attribute, sort_info)
+
+        print ("After")
+        for i in range(n):
+            print (sort_info.list[i])
 
         if sort_info.selected_order == "Descending":
             handle_descending(sort_info)
@@ -203,18 +235,22 @@ def initialize_buttons(screen, sort_info):
 
 
 def main():
+    reuse = 0
     screen = initialize_pygame()
     clock = pg.time.Clock()
     sort_info = SortInfo()
-    initialize_buttons(screen, sort_info)
     while(True):
+        initialize_buttons(screen, sort_info)
         move_to_loading_screen = menu_display(screen, sort_info, clock)
         if move_to_loading_screen:
             move_to_loading_screen = False
-            move_to_analytics_screen = loading_display(screen, sort_info, clock)
+            move_to_analytics_screen = loading_display(screen, sort_info, clock, reuse)
             if move_to_analytics_screen:
                 analytics_screen(screen, sort_info, clock)
+                reuse = sort_info.list
+                sort_info.reset()
                 move_to_analytics_screen = False
+
 
 
 if __name__ == "__main__":
