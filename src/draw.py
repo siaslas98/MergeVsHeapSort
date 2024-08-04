@@ -69,6 +69,9 @@ def draw_Analysis_results(screen, sort_info):
     names, values = zip(*sort_info.top_5)
     for i in range(5):
         draw_text_with_outline(screen, FONT2, f"{names[i]}: {values[i]}", (WINDOWSIZE[0]/4), 150 + 50 * i, pg.Color('black'), pg.Color('white'), 2)
+    
+    draw_text_with_outline(screen, FONT2, f"Heap Sort: {sort_info.heap_timer}", (WINDOWSIZE[0]/4), 150 + 50 * 6, pg.Color('black'), pg.Color('white'), 2)
+    draw_text_with_outline(screen, FONT2, f"TimSort: {sort_info.timsort_timer}", (WINDOWSIZE[0]/4), 150 + 50 * 7, pg.Color('black'), pg.Color('white'), 2)
 
 
 def draw(screen, sort_info, bars=None, new_ele_idx=None, Category = None):

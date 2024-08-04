@@ -57,13 +57,19 @@ def sort_helper(sort_info, attribute):
     timer_2 = Timer()
     comparator = Stock.get_comparator(attribute)
     timer_1.start()
+    print("Timer 1 Started")
     heap_sort(sort_info, comparator)
     timer_1.stop()
     sort_info.heap_timer = timer_1.get_value()
+    timer_1.reset()
     timer_2.start()
+    print("Timer 2 Started")
     timsort(sort_info, comparator)
     timer_2.stop()
     sort_info.timsort_timer = timer_2.get_value()
+    timer_2.reset()
+    print(f"Heap Sort: {sort_info.heap_timer}")
+    print(f"TimSort: {sort_info.timsort_timer}")
 
 
 def handle_descending(sort_info):
