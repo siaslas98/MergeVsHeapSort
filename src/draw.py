@@ -124,8 +124,13 @@ def draw(screen, sort_info, bars=None, new_ele_idx=None, Category = None):
         screen.blit(Menu_tips, (controls_menu-80, 5 + Menu_Title.get_height() + 10))
 =======
         screen.blit(BACKGROUND_IMAGE, (0,0)) 
+<<<<<<< Updated upstream
         draw_text_with_outline(screen, FONT1, "Sorting Algorithm Visualizer", controls_menu, 5, (247, 210, 57), 'black')
         draw_text_with_outline(screen, FONT2, "Click on the buttons to select the sorting order and attribute", controls_menu-80, 5 + Menu_Title_fake.get_height() + 10, (247, 210, 57), 'black')
+>>>>>>> Stashed changes
+=======
+        draw_text_with_outline(screen, FONT1, "Sorting Algorithm Visualizer", controls_menu, 5, (247,210,57) , 'black')
+        draw_text_with_outline(screen, FONT2, "Click on the buttons to select the sorting order and attribute", controls_menu-80, 5 + Menu_Title_fake.get_height() + 10, (247,210,57), 'black')
 >>>>>>> Stashed changes
         draw_buttons(screen, sort_info, btn_type='menu')
 

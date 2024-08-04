@@ -76,12 +76,17 @@ def handle_descending(sort_info):
 
 
 def set_top_5(attribute, sort_info):
+<<<<<<< Updated upstream
     if sort_info.selected_order == "Ascending":
         for i in range(0, 5):
             sort_info.top_5[i] = (sort_info.list[n-i-1].name, get_attribute(attribute, sort_info, n-i-1))
     else:
         for i in range(0, 5):
             sort_info.top_5[i] = (sort_info.list[i].name, get_attribute(attribute, sort_info, i))
+=======
+    for stock in range(0, 5):
+        sort_info.top_5[stock] = (sort_info.list[stock].name, get_attribute(attribute, sort_info, n-1-stock))
+>>>>>>> Stashed changes
 
 
 def get_attribute(attribute, sort_info, n):

@@ -190,11 +190,24 @@ def analytics_screen(screen, sort_info, clock):
                         return
 
         draw(screen, sort_info, None, None, 'Analyze')
+<<<<<<< Updated upstream
         range_display = 50 if len(sort_info.list) > 50 else len(sort_info.list)
         sort_info.graph_data = []
         for i in range(range_display):
             sort_info.graph_data = [get_attribute(sort_info.selected_attribute, sort_info, i)]
         draw_bar_graph(sort_info, screen, WINDOWSIZE[0]/2 + 100, WINDOWSIZE[1]/4, 400, 400, sort_info.graph_data )
+=======
+        if n < 50:
+            i = n
+        else:
+            i = 50
+
+        values = []
+        for i in range(i):
+            values.append(get_attribute(sort_info.selected_attribute, sort_info, i))
+        draw_bar_graph(sort_info, screen, WINDOWSIZE[0]/2 + 200, WINDOWSIZE[1]/5, 300, 300, values)
+        values = []
+>>>>>>> Stashed changes
         pg.display.update()
         clock.tick(60)
 
@@ -218,6 +231,10 @@ def loading_display(screen, sort_info, clock, reuse = 0):
 
         sort_off_attribute(sort_info.selected_attribute, sort_info)
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
         if sort_info.selected_order == "Descending":
             handle_descending(sort_info)
 
@@ -243,6 +260,8 @@ def main():
             move_to_loading_screen = False
             move_to_analytics_screen = loading_display(screen, sort_info, clock, reuse)
             if move_to_analytics_screen:
+                for i in range(10):
+                    print(sort_info.list[i])
                 analytics_screen(screen, sort_info, clock)
                 reuse = sort_info.list
                 sort_info.reset()
