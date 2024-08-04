@@ -54,18 +54,15 @@ def generate_random_stock(name):
 
 
 def sort_helper(sort_info, attribute):
-    comparator = Stock.get_comparator(attribute)
     timer_1.start()
-    print("Timer 1 Started")
-    heap_sort(sort_info, comparator)
-    print("Heap Sort Done")
-    print(sort_info.list)
+    print("Timer 1 Started / Heap")
+    heap_sort(sort_info, sort_info.comparator)
     timer_1.stop()
     sort_info.heap_timer = timer_1.get_value()
     timer_1.reset()
     timer_2.start()
-    print("Timer 2 Started")
-    timsort(sort_info, comparator)
+    print("Timer 2 Started / Timsort")
+    timsort(sort_info, sort_info.comparator)
     timer_2.stop()
     sort_info.timsort_timer = timer_2.get_value()
     timer_2.reset()
@@ -84,19 +81,19 @@ def set_top_5(attribute, sort_info):
         num += 1
 
 
-def get_attribute(attribute, sort_info, n):
+def get_attribute(attribute, sort_info, l):
     if attribute == "Open":
-        return sort_info.list[n].open
+        return sort_info.list[l].open
     elif attribute == "High":
-        return sort_info.list[n].high
+        return sort_info.list[l].high
     elif attribute == "Low":
-        return sort_info.list[n].low
+        return sort_info.list[l].low
     elif attribute == "Close":
-        return sort_info.list[n].close
+        return sort_info.list[l].close
     elif attribute == "Volume":
-        return sort_info.list[n].volume
+        return sort_info.list[l].volume
     elif attribute == "OpenInt":
-        return sort_info.list[n].openInt
+        return sort_info.list[l].openInt
 
 
 def sort_off_attribute(attribute, sort_info):
