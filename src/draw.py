@@ -69,7 +69,7 @@ def draw_Analysis_results(screen, sort_info):
     names, values = zip(*sort_info.top_5)
     for i in range(5):
         text_surface = FONT2.render(f"{names[i]}: {values[i]}", True, pg.Color('white'))  # Render text in black color
-        screen.blit(text_surface, ((WINDOWSIZE[0]/2), 100 + 50 * i))
+        screen.blit(text_surface, ((WINDOWSIZE[0]/4), 150 + 50 * i))
 
 
 def draw(screen, sort_info, bars=None, new_ele_idx=None, Category = None):

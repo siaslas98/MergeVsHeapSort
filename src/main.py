@@ -97,7 +97,7 @@ def gen_menu_buttons(screen, sort_info):
     ]
     
     for name, pos in analyze_buttons:
-        button = Button(screen, sort_info, name, pos[0], pos[1], SCALE, ELEVATION)
+        button = Button(screen, sort_info, name, pos[0], 700, SCALE, ELEVATION)
         sort_info.analyze_buttons_group.add(button)
     # ******************************************************************
 
