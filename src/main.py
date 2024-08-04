@@ -190,6 +190,15 @@ def analytics_screen(screen, sort_info, clock):
                         return
 
         draw(screen, sort_info, None, None, 'Analyze')
+        if n < 50:
+            i = n
+        else:
+            i = 50
+
+        values = []
+        for i in range(i):
+            values.append(get_attribute(sort_info.selected_attribute, sort_info, i))
+        draw_bar_graph(sort_info, screen, WINDOWSIZE[0]/2 + 200, WINDOWSIZE[1]/5, 300, 300, values)
         pg.display.update()
         clock.tick(60)
 

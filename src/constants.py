@@ -19,6 +19,10 @@ pg.init()
 WINDOWSIZE = (1200, 800)
 #WINDOWSIZE = (1800, 1000)
 
+# range for the sorting 
+min_range = 10
+max_range = 10000
+
 # Padding for the sorting screen display
 TOTAL_SIDE_PAD = 100
 SIDE_PAD = round(TOTAL_SIDE_PAD / 2)

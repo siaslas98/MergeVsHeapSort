@@ -32,6 +32,24 @@ def draw_heap(screen, sort_info, highlight=None, intermediate_positions=None):
 
     pg.display.update()
 
+def draw_bar_graph(sort_info, screen, x, y, width, height, values):
+    
+    # Draw the background of the graph as a white rectangle
+    pg.draw.rect(screen, (255, 255, 255), (x, y, width, height))
+    
+    # Calculate the width of each bar
+    bar_width = width // len(values)
+    max_value = max_range
+    
+    # Draw each bar
+    for i in range(len(values)):
+        bar_height = int((values[i] / max_value) * height)
+        bar_x = x + i * bar_width
+        bar_y = y + (height - bar_height)
+        pg.draw.rect(screen, (0, 0, 255), (bar_x, bar_y, bar_width, bar_height))
+    
+    # Update the display
+    pg.display.flip()
 
 def draw_buttons(screen, sort_info, btn_type):
     if btn_type == 'menu':
