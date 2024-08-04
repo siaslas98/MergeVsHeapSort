@@ -181,8 +181,8 @@ def loading_display(screen, sort_info, clock):
                 pg.quit()
                 sys.exit()
 
-        screen.fill(BACKGROUND_COLOR)
-        screen.blit(Loading_dialogue, (loading_text_x, loading_text_y))
+        screen.blit(BACKGROUND_IMAGE, (0,0))
+        draw_text_with_outline(screen, FONT1, Loading_dialogue, loading_text_x, loading_text_y, pg.Color('black'), pg.Color('white'), 2)
         pg.display.update()
         clock.tick(60)
 

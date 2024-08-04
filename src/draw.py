@@ -62,20 +62,19 @@ def draw_bars(screen, bars, new_ele_idx=None):
         pg.draw.rect(screen, 'Blue', bar, 1)
 
 def draw_Analysis_results(screen, sort_info):
-    screen.fill(BACKGROUND_COLOR)
-    screen.blit(Analyze_Title, (analyze_title_x, analyze_title_y))
-    screen.blit(Analyze_tips, (analyze_tips_x, analyze_tips_y))
+    screen.blit(BACKGROUND_IMAGE, (0,0))
+    draw_text_with_outline(screen, FONT2, "Results", analyze_title_x, analyze_title_y, pg.Color('black'), pg.Color('white'), 2)
+    draw_text_with_outline(screen, FONT2, "Below are the top 5 stocks", analyze_tips_x, analyze_tips_y, pg.Color('black'), pg.Color('white'), 2)
     
     names, values = zip(*sort_info.top_5)
     for i in range(5):
-        text_surface = FONT2.render(f"{names[i]}: {values[i]}", True, pg.Color('white'))  # Render text in black color
-        screen.blit(text_surface, ((WINDOWSIZE[0]/4), 150 + 50 * i))
+        draw_text_with_outline(screen, FONT2, f"{names[i]}: {values[i]}", (WINDOWSIZE[0]/4), 150 + 50 * i, pg.Color('black'), pg.Color('white'), 2)
 
 
 def draw(screen, sort_info, bars=None, new_ele_idx=None, Category = None):
 
     if bars is not None:
-        screen.fill(BACKGROUND_COLOR)
+        screen.blit(BACKGROUND_IMAGE, (0,0))
         pg.draw.rect(screen, (169, 173, 76), (0, 0, WINDOWSIZE[0], sorting_bottom + 4), 4, 1)
         # pg.draw.line(screen, (169, 173, 76), (0, 100), (1800, 100), 4)
         draw_bars(screen, bars, new_ele_idx)
@@ -85,9 +84,9 @@ def draw(screen, sort_info, bars=None, new_ele_idx=None, Category = None):
         draw_Analysis_results(screen, sort_info)
         draw_buttons(screen, sort_info, btn_type='Analyze')
     else:
-        screen.fill(BACKGROUND_COLOR)
-        screen.blit(Menu_Title, (controls_menu, 5))
-        screen.blit(Menu_tips, (controls_menu-80, 5 + Menu_Title.get_height() + 10))
+        screen.blit(BACKGROUND_IMAGE, (0,0)) 
+        draw_text_with_outline(screen, FONT1, "Sorting Algorithm Visualizer", controls_menu, 5, TEXT_COLOR1, 'black')
+        draw_text_with_outline(screen, FONT2, "Click on the buttons to select the sorting order and attribute", controls_menu-80, 5 + Menu_Title_fake.get_height() + 10, TEXT_COLOR1, 'black')
         draw_buttons(screen, sort_info, btn_type='menu')
 
         # Draw the expanded dropdown menus if they are expanded

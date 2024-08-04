@@ -1,4 +1,15 @@
 import pygame as pg
+def draw_text_with_outline(screen, font, text, x, y, main_color, outline_color, outline_width=1):
+    text_surface = font.render(text, True, main_color)
+    outline_surfaces = []
+    for dx, dy in [(-outline_width, -outline_width), (-outline_width, outline_width), (outline_width, -outline_width), (outline_width, outline_width)]:
+        outline_surface = font.render(text, True, outline_color)
+        outline_surfaces.append((outline_surface, (x + dx, y + dy)))
+    
+    for outline_surface, (ox, oy) in outline_surfaces:
+        screen.blit(outline_surface, (ox, oy))
+    
+    screen.blit(text_surface, (x, y))
 
 pg.init()
 
@@ -13,11 +24,16 @@ TOP_PADDING = 100
 
 # Colors
 BACKGROUND_COLOR = (64, 64, 64)
-TEXT_COLOR1 = (225, 223, 230)
+TEXT_COLOR1 = pg.Color('black')
 TEXT_COLOR2 = (114, 118, 184)
 SORTED = 'Green'
 CURRENT = 'Blue'
 UNSORTED = [(200, 200, 200), (128, 128, 128), (50, 50, 50)]
+
+# Background image
+BACKGROUND_IMAGE_PATH = 'imgs/Backgrounds/Cash.jpg'
+TEMP = pg.image.load(BACKGROUND_IMAGE_PATH)
+BACKGROUND_IMAGE = pg.transform.scale(TEMP, WINDOWSIZE)
 
 # Fonts
 FONT1 = pg.font.SysFont('Arial Black', 50)
@@ -51,7 +67,7 @@ MAIN_MENU_BUTTON_POSITION = (MAIN_MENU_BUTTON[0], MAIN_MENU_BUTTON[1])
 
 # Image Dictionary
 # Key is path, value is reference name
-IMAGE_DICT = {'../imgs/Blank.png': 'Blank'}
+IMAGE_DICT = {'imgs/Blank.png': 'Blank'}
 
 # Additional button attributes
 SCALE = 1
@@ -62,24 +78,35 @@ TITLE_TO_TIPS_OFFSET = 20
 
 sorting_bottom = int(WINDOWSIZE[1] * 0.85)
 
-Menu_Title = FONT1.render("Sorting Algorithm Visualizer", 1, TEXT_COLOR1)
-controls_menu = WINDOWSIZE[0] / 2 - Menu_Title.get_width()/2
+Menu_Title = "Sorting Algorithm Visualizer"
+Menu_Title_fake = FONT1.render("Sorting Algorithm Visualizer", 1, TEXT_COLOR1)
 
-Menu_tips = FONT2.render("Click on the buttons to select the sorting algorithm and order", 1, TEXT_COLOR1)
-controls_menu_tips = controls_menu + Menu_Title.get_height() + TITLE_TO_TIPS_OFFSET
+controls_menu = WINDOWSIZE[0] / 2 - Menu_Title_fake.get_width()/2
+
+Menu_tips = "Click on the buttons to select the sorting order and attribute"
+Menu_tips_fake = FONT2.render("Click on the buttons to select the sorting order and attribute", 1, TEXT_COLOR1)
+
+controls_menu_tips = controls_menu + Menu_Title_fake.get_height() + TITLE_TO_TIPS_OFFSET
 
 
-Loading_dialogue = FONT1.render("Sorting data...", 1, TEXT_COLOR1)
-loading_text_x = WINDOWSIZE[0] / 2 - Loading_dialogue.get_width()/2
-loading_text_y = WINDOWSIZE[1] / 2 - Loading_dialogue.get_height()/2
+Loading_dialogue = "Sorting data..."
+Loading_dialogue_fake = FONT1.render("Sorting data...", 1, TEXT_COLOR1)
 
-Analyze_Title = FONT1.render("Results", 1, TEXT_COLOR1)
-analyze_title_x = WINDOWSIZE[0] / 2 - Analyze_Title.get_width()/2
+loading_text_x = WINDOWSIZE[0] / 2 - Loading_dialogue_fake.get_width()/2
+loading_text_y = WINDOWSIZE[1] / 2 - Loading_dialogue_fake.get_height()/2
+
+Analyze_Title = "Results"
+Analyze_Title_fake = FONT1.render("Results", 1, TEXT_COLOR1)
+
+analyze_title_x = WINDOWSIZE[0] / 2 - Analyze_Title_fake.get_width()/2
 analyze_title_y = 10
 
-Analyze_tips = FONT2.render("Below are the top 5 stocks", 1, TEXT_COLOR1)
-analyze_tips_x = WINDOWSIZE[0] / 2 - Analyze_tips.get_width()/2
-analyze_tips_y = analyze_title_y + Analyze_Title.get_height() + TITLE_TO_TIPS_OFFSET
+Analyze_tips = "Below are the top 5 stocks"
+Analyze_tips_fake = FONT2.render("Below are the top 5 stocks", 1, TEXT_COLOR1)
+analyze_tips_x = WINDOWSIZE[0] / 2 - Analyze_tips_fake.get_width()/2
+analyze_tips_y = analyze_title_y + Analyze_Title_fake.get_height() + TITLE_TO_TIPS_OFFSET
+
+
 
 # Sorting
 n = 100000
