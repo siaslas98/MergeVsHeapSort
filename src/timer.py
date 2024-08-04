@@ -26,3 +26,7 @@ class Timer:
             return self.elapsed_time + (time.time() - self.start_time)
         else:
             return self.elapsed_time
+    def reset(self):
+        self.start_time = None
+        self.elapsed_time = 0
+        self.running = False

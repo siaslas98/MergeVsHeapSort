@@ -24,7 +24,7 @@ class SortInfo:
         self.selected_attribute = None
         self.top_5 = [0, 0, 0, 0, 0]
         self.date = ""
-        self.list = []  # List  of stock data objects to perform sorting on
+        self.list = []  # List of stock data objects to perform sorting on
         self.heap_timer = None
         self.timsort_timer = None
         self.images = Images()
@@ -186,9 +186,6 @@ def loading_display(screen, sort_info, clock):
         pg.display.update()
         clock.tick(60)
 
-        if loading_complete:
-            return True
-
         gen_starting_list(sort_info)
         sort_off_attribute(sort_info.selected_attribute, sort_info)
 
@@ -197,6 +194,8 @@ def loading_display(screen, sort_info, clock):
 
         set_top_5(sort_info.selected_attribute, sort_info)
         loading_complete = True
+        if loading_complete:
+            return True
 
 
 def initialize_buttons(screen, sort_info):
