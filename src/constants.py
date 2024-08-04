@@ -1,23 +1,7 @@
 import pygame as pg
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
 from timer import Timer
->>>>>>> cd8b0217ef2cefe0aec04f59eb1adf487d562ef1
 
-def draw_text_with_outline(screen, font, text, x, y, main_color, outline_color, outline_width=1):
-    text_surface = font.render(text, True, main_color)
-    outline_surfaces = []
-    for dx, dy in [(-outline_width, -outline_width), (-outline_width, outline_width), (outline_width, -outline_width), (outline_width, outline_width)]:
-        outline_surface = font.render(text, True, outline_color)
-        outline_surfaces.append((outline_surface, (x + dx, y + dy)))
-    
-    for outline_surface, (ox, oy) in outline_surfaces:
-        screen.blit(outline_surface, (ox, oy))
-    
-    screen.blit(text_surface, (x, y))
->>>>>>> 3fb4e2d5deffd5dffa80c89d4d8ae1a928e7e6af
+''' DO NOT WRITE YOUR FUNCTION DEFINITIONS HERE, THIS IS FOR CONSTANTS AND VARIABLES'''
 
 pg.init()
 
