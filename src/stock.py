@@ -58,6 +58,8 @@ def sort_helper(sort_info, attribute):
     timer_1.start()
     print("Timer 1 Started")
     heap_sort(sort_info, comparator)
+    print("Heap Sort Done")
+    print(sort_info.list)
     timer_1.stop()
     sort_info.heap_timer = timer_1.get_value()
     timer_1.reset()

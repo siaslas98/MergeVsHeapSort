@@ -161,8 +161,9 @@ def menu_display(screen, sort_info, clock):
                             for parentBtn in sort_info.menu_buttons_group:
                                 if parentBtn.name == 'Attributes':
                                     parentBtn.change_button_name(btn.name)
-                            sort_info.selected_attribute = btn.name
-                            sort_info.attribute_dropdown_expanded = False
+                                    sort_info.selected_attribute = btn.name
+                                    sort_info.attribute_dropdown_expanded = False
+                            
 
                 if sort_info.selected_order and sort_info.selected_attribute:
                     # submit button can now have functionality
@@ -217,11 +218,10 @@ def loading_display(screen, sort_info, clock, reuse = 0):
         pg.display.update()
         clock.tick(60)
 
-        if (reuse == 0):
-            gen_starting_list(sort_info)
+        
+        gen_starting_list(sort_info)
 
         sort_off_attribute(sort_info.selected_attribute, sort_info)
-        print(sort_info.list)
 
         if sort_info.selected_order == "Descending":
             handle_descending(sort_info)
@@ -237,20 +237,17 @@ def initialize_buttons(screen, sort_info):
 
 
 def main():
-    reuse = 0
     screen = initialize_pygame()
     clock = pg.time.Clock()
-    sort_info = SortInfo()
     while(True):
+        sort_info = SortInfo()
         initialize_buttons(screen, sort_info)
         move_to_loading_screen = menu_display(screen, sort_info, clock)
         if move_to_loading_screen:
             move_to_loading_screen = False
-            move_to_analytics_screen = loading_display(screen, sort_info, clock, reuse)
+            move_to_analytics_screen = loading_display(screen, sort_info, clock)
             if move_to_analytics_screen:
                 analytics_screen(screen, sort_info, clock)
-                reuse = sort_info.list
-                sort_info.reset()
                 move_to_analytics_screen = False
 
 

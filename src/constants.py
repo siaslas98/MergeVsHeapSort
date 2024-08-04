@@ -30,7 +30,7 @@ CURRENT = 'Blue'
 UNSORTED = [(200, 200, 200), (128, 128, 128), (50, 50, 50)]
 
 # Background image
-BACKGROUND_IMAGE_PATH = '../imgs/Backgrounds/Cash.jpg'
+BACKGROUND_IMAGE_PATH = 'imgs/Backgrounds/Cash.jpg'
 TEMP = pg.image.load(BACKGROUND_IMAGE_PATH)
 BACKGROUND_IMAGE = pg.transform.scale(TEMP, WINDOWSIZE)
 
@@ -66,7 +66,7 @@ MAIN_MENU_BUTTON_POSITION = (MAIN_MENU_BUTTON[0], MAIN_MENU_BUTTON[1])
 
 # Image Dictionary
 # Key is path, value is reference name
-IMAGE_DICT = {'../imgs/Blank.png': 'Blank'}
+IMAGE_DICT = {'imgs/Blank.png': 'Blank'}
 
 # Additional button attributes
 SCALE = 1
