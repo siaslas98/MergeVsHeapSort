@@ -32,6 +32,25 @@ def draw_heap(screen, sort_info, highlight=None, intermediate_positions=None):
 
     pg.display.update()
 
+def draw_bar_graph(sort_info, screen, x, y, width, height, values):
+    
+    # Draw the background of the graph as a white rectangle
+    pg.draw.rect(screen, (255, 255, 255), (x, y, width, height))
+    
+    # Calculate the width of each bar
+    bar_width = width // len(values)
+    max_value = max(values)
+    
+    # Draw each bar
+    for i in range(len(values)):
+        # Ensure a minimum height of 1 for visibility
+        bar_height = int((values[i] / max_value) * (height - 1)) + 1 if max_value > 0 else 1
+        bar_x = x + i * bar_width
+        bar_y = y + (height - bar_height)
+        pg.draw.rect(screen, (247, 210, 57), (bar_x, bar_y, bar_width, bar_height))
+    
+    # Update the display
+    pg.display.flip()
 
 def draw_buttons(screen, sort_info, btn_type):
     if btn_type == 'menu':
@@ -88,8 +107,8 @@ def draw(screen, sort_info, bars=None, new_ele_idx=None, Category = None):
         draw_buttons(screen, sort_info, btn_type='Analyze')
     else:
         screen.blit(BACKGROUND_IMAGE, (0,0)) 
-        draw_text_with_outline(screen, FONT1, "Sorting Algorithm Visualizer", controls_menu, 5, TEXT_COLOR1, 'black')
-        draw_text_with_outline(screen, FONT2, "Click on the buttons to select the sorting order and attribute", controls_menu-80, 5 + Menu_Title_fake.get_height() + 10, TEXT_COLOR1, 'black')
+        draw_text_with_outline(screen, FONT1, "Sorting Algorithm Visualizer", controls_menu, 5, pg.Color('white'), pg.Color('black'), 2)
+        draw_text_with_outline(screen, FONT2, "Click on the buttons to select the sorting order and attribute", controls_menu-80, 5 + Menu_Title_fake.get_height() + 10, pg.Color('white'), pg.Color('black'),2)
         draw_buttons(screen, sort_info, btn_type='menu')
 
         # Draw the expanded dropdown menus if they are expanded

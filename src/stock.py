@@ -2,6 +2,7 @@ import random
 import string
 from sorting import *
 from timer import *
+from constants import *
 
 class Stock:
     def __init__(self, name, open, high, low, close, volume, openInt):
@@ -43,18 +44,16 @@ while len(company_names) < n:
 
 # Function to generate random stock data
 def generate_random_stock(name):
-    open_price = round(random.uniform(100, 500), 2)
-    high_price = round(random.uniform(open_price, open_price + 50), 2)
-    low_price = round(random.uniform(open_price - 50, open_price), 2)
-    close_price = round(random.uniform(low_price, high_price), 2)
-    volume = random.randint(1000, 10000)
-    openInt = random.randint(1000, 10000)
+    open_price = round(random.uniform(min_range, max_range), 2)
+    high_price = round(random.uniform(min_range, max_range), 2)
+    low_price = round(random.uniform(min_range, max_range), 2)
+    close_price = round(random.uniform(min_range, max_range), 2)
+    volume = random.randint(min_range, max_range)
+    openInt = random.randint(min_range, max_range)
     return Stock(name, open_price, high_price, low_price, close_price, volume, openInt)
 
 
 def sort_helper(sort_info, attribute):
-    timer_1 = Timer()
-    timer_2 = Timer()
     comparator = Stock.get_comparator(attribute)
     timer_1.start()
     print("Timer 1 Started")
@@ -77,8 +76,10 @@ def handle_descending(sort_info):
 
 
 def set_top_5(attribute, sort_info):
+    num = n-5
     for stock in range(0, 5):
-        sort_info.top_5[stock] = (sort_info.list[stock].name, get_attribute(attribute, sort_info, stock))
+        sort_info.top_5[4 - stock] = (sort_info.list[num].name, get_attribute(attribute, sort_info, num))
+        num += 1
 
 
 def get_attribute(attribute, sort_info, n):

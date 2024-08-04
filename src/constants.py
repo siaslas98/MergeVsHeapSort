@@ -1,6 +1,10 @@
 import pygame as pg
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+from timer import Timer
+>>>>>>> cd8b0217ef2cefe0aec04f59eb1adf487d562ef1
 
 def draw_text_with_outline(screen, font, text, x, y, main_color, outline_color, outline_width=1):
     text_surface = font.render(text, True, main_color)
@@ -21,10 +25,17 @@ pg.init()
 WINDOWSIZE = (1200, 800)
 #WINDOWSIZE = (1800, 1000)
 
+# range for the sorting 
+min_range = 10
+max_range = 10000
+
 # Padding for the sorting screen display
 TOTAL_SIDE_PAD = 100
 SIDE_PAD = round(TOTAL_SIDE_PAD / 2)
 TOP_PADDING = 100
+
+timer_1 = Timer()
+timer_2 = Timer()
 
 # Colors
 BACKGROUND_COLOR = (64, 64, 64)
@@ -113,7 +124,7 @@ analyze_tips_y = analyze_title_y + Analyze_Title_fake.get_height() + TITLE_TO_TI
 
 
 # Sorting
-n = 100000
+n = 5
 
 # Box Attributes + Node Attributes(Ignore this)
 STARTING_X = 50
