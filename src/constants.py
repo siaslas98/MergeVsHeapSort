@@ -1,4 +1,5 @@
 import pygame as pg
+from timer import Timer
 
 def draw_text_with_outline(screen, font, text, x, y, main_color, outline_color, outline_width=1):
     text_surface = font.render(text, True, main_color)
@@ -22,6 +23,9 @@ WINDOWSIZE = (1200, 800)
 TOTAL_SIDE_PAD = 100
 SIDE_PAD = round(TOTAL_SIDE_PAD / 2)
 TOP_PADDING = 100
+
+timer_1 = Timer()
+timer_2 = Timer()
 
 # Colors
 BACKGROUND_COLOR = (64, 64, 64)

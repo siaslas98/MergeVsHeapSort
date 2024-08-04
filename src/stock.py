@@ -2,6 +2,7 @@ import random
 import string
 from sorting import *
 from timer import *
+from constants import *
 
 class Stock:
     def __init__(self, name, open, high, low, close, volume, openInt):
@@ -53,8 +54,6 @@ def generate_random_stock(name):
 
 
 def sort_helper(sort_info, attribute):
-    timer_1 = Timer()
-    timer_2 = Timer()
     comparator = Stock.get_comparator(attribute)
     timer_1.start()
     print("Timer 1 Started")
