@@ -220,7 +220,6 @@ def main():
     while True:
         sort_info = SortInfo()
         initialize_buttons(screen, sort_info)
-        analyze_real(screen, clock)
         move_to_loading_screen = menu_display(screen, sort_info, clock)
         if move_to_loading_screen:
             move_to_loading_screen = False
@@ -228,6 +227,7 @@ def main():
             if move_to_analytics_screen:
                 analytics_screen(screen, sort_info, clock)
                 move_to_analytics_screen = False
+                analyze_real(screen, clock)
 
 
 if __name__ == "__main__":

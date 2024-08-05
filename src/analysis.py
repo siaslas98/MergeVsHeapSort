@@ -96,6 +96,7 @@ class Button:
         if event.type == pg.MOUSEBUTTONDOWN and self.rect.collidepoint(event.pos):
             if self.action:
                 self.action()
+                return True
 
 
 def draw_input_boxes(screen, info, color=(255, 255, 255)):
@@ -187,14 +188,22 @@ def analyze_action():
 
 
 def analyze_real(screen, clock):
-    global info, dropdown, analyze_button, plot_image
+    global info, dropdown, analyze_button, main_menu_button, plot_image
 
     info = INFO()
     dropdown = Dropdown(50, 150, 200, 35, info.BASE_FONT, ['Apple (AAPL)', 'Microsoft (MSFT)', 'Amazon (AMZN)', 'Alphabet (GOOGL)', 'Tesla (TSLA)'])
     analyze_button = Button(270, 150, 150, 35, "Analyze", info.BASE_FONT, analyze_action)
-    plot_image = None
 
-    while True:
+    def return_to_main():
+        nonlocal running
+        running = False
+
+
+    main_menu_button = Button(450, 150, 150, 35, "Main Menu", info.BASE_FONT, return_to_main())
+    plot_image = None
+    running = True
+
+    while running:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
@@ -242,11 +251,15 @@ def analyze_real(screen, clock):
                         else:
                             info.input_box_active[key] = False
                 analyze_button.handle_event(event)  # This handles analyze button events
+                if main_menu_button.handle_event(event):
+                    running = False
+
 
         screen.fill((0, 0, 0))  # Fill the screen with black
         draw_input_boxes(screen, info)
         dropdown.draw(screen)
         analyze_button.draw(screen)
+        main_menu_button.draw(screen)
 
         # Draw input text
         start_date_surf = info.BASE_FONT.render(info.start_date, True, (255, 255, 255))
