@@ -54,20 +54,16 @@ def generate_random_stock(name):
 
 
 def sort_helper(sort_info, attribute):
+    comparator = Stock.get_comparator(attribute)
+    test_run_timsort = sort_info
     timer_1.start()
-    print("Timer 1 Started / Heap")
-    heap_sort(sort_info, sort_info.comparator)
+    heap_sort(sort_info, comparator)
     timer_1.stop()
     sort_info.heap_timer = timer_1.get_value()
-    timer_1.reset()
     timer_2.start()
-    print("Timer 2 Started / Timsort")
-    timsort(sort_info, sort_info.comparator)
+    timsort(test_run_timsort, comparator)
     timer_2.stop()
     sort_info.timsort_timer = timer_2.get_value()
-    timer_2.reset()
-    print(f"Heap Sort: {sort_info.heap_timer}")
-    print(f"TimSort: {sort_info.timsort_timer}")
 
 
 def handle_descending(sort_info):
@@ -75,25 +71,23 @@ def handle_descending(sort_info):
 
 
 def set_top_5(attribute, sort_info):
-    num = n-5
     for stock in range(0, 5):
-        sort_info.top_5[4 - stock] = (sort_info.list[num].name, get_attribute(attribute, sort_info, num))
-        num += 1
+        sort_info.top_5[stock] = (sort_info.list[stock].name, get_attribute(attribute, sort_info, stock))
 
 
-def get_attribute(attribute, sort_info, l):
+def get_attribute(attribute, sort_info, n):
     if attribute == "Open":
-        return sort_info.list[l].open
+        return sort_info.list[n].open
     elif attribute == "High":
-        return sort_info.list[l].high
+        return sort_info.list[n].high
     elif attribute == "Low":
-        return sort_info.list[l].low
+        return sort_info.list[n].low
     elif attribute == "Close":
-        return sort_info.list[l].close
+        return sort_info.list[n].close
     elif attribute == "Volume":
-        return sort_info.list[l].volume
+        return sort_info.list[n].volume
     elif attribute == "OpenInt":
-        return sort_info.list[l].openInt
+        return sort_info.list[n].openInt
 
 
 def sort_off_attribute(attribute, sort_info):

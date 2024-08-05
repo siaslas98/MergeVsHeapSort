@@ -71,16 +71,7 @@ def initialize_pygame():
 
 
 def gen_starting_list(sort_info):
-    TEST_LIST = [Stock('a', 1, 2, 3, 4, 5, 6),
-             Stock('b', 2, 3, 4, 5, 1 , 6),
-             Stock('c', 3, 4, 5, 1, 2 , 6),
-             Stock('d', 4, 5, 1, 2, 3 , 6),
-             Stock('e', 5, 1, 2, 3, 4, 6)]
-    sort_info.list = TEST_LIST
-    att = sort_info.selected_attribute
-    att = att.lower()
-    sort_info.comparator = Stock.get_comparator(att)
-    # sort_info.list = [generate_random_stock(company_names[i]) for i in range(n)]  # n == 100000
+    sort_info.list = [generate_random_stock(company_names[i]) for i in range(n)]  # n == 100000
 
 
 # Reference button.py for more info
@@ -175,11 +166,10 @@ def menu_display(screen, sort_info, clock):
 
                 if sort_info.selected_order and sort_info.selected_attribute:
                     # submit button can now have functionality
-                    pass
-                for btn in sort_info.menu_buttons_group:
-                    if btn.rect.collidepoint(mouse_pos):
-                        if btn.name == 'Sort!':
-                            return True
+                    for btn in sort_info.menu_buttons_group:
+                        if btn.rect.collidepoint(mouse_pos):
+                            if btn.name == 'Sort!':
+                                return True
 
         draw(screen, sort_info)  # Updated draw call
         pg.display.update()
@@ -224,33 +214,19 @@ def loading_display(screen, sort_info, clock, reuse = 0):
         screen.blit(BACKGROUND_IMAGE, (0,0))
         draw_text_with_outline(screen, FONT1, Loading_dialogue, loading_text_x, loading_text_y, pg.Color('black'), pg.Color('white'), 2)
 
+        pg.display.update()
+        clock.tick(60)
+
         gen_starting_list(sort_info)
-
-        print(sort_info.selected_attribute)
-        print(sort_info.selected_order)
-        print('\n')
-
-        print('Before Sort')
-        
-        for stock in sort_info.list:
-            attribute_value = getattr(stock, sort_info.selected_attribute.lower())
-            print(f'Name: {stock.name}, {sort_info.selected_attribute.lower()}: {attribute_value}')
 
         sort_off_attribute(sort_info.selected_attribute, sort_info)
 
         if sort_info.selected_order == "Descending":
             handle_descending(sort_info)
 
-        print('After Sort')
-        for stock in sort_info.list:
-            attribute_value = getattr(stock, sort_info.selected_attribute.lower())
-            print(f'Name: {stock.name}, {sort_info.selected_attribute.lower()}: {attribute_value}')
-
         set_top_5(sort_info.selected_attribute, sort_info)
-        pg.display.update()
-        clock.tick(60)
-
         loading_complete = True
+
         if loading_complete:
             return True
 
@@ -262,15 +238,12 @@ def initialize_buttons(screen, sort_info):
 def main():
     screen = initialize_pygame()
     clock = pg.time.Clock()
-    round = 1
-    while(True):
+    while True:
         sort_info = SortInfo()
         initialize_buttons(screen, sort_info)
         move_to_loading_screen = menu_display(screen, sort_info, clock)
         if move_to_loading_screen:
             move_to_loading_screen = False
-            print(f'Round : {round}')
-            round += 1
             move_to_analytics_screen = loading_display(screen, sort_info, clock)
             if move_to_analytics_screen:
                 analytics_screen(screen, sort_info, clock)

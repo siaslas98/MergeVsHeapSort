@@ -3,13 +3,12 @@ from box import Box
 from node import Node
 from bars import *
 from draw import *
-from constants import n
 
 
 ''' Heap building in place'''
 
 
-def heapify(sort_info, parent, comparator):
+def heapify(sort_info, parent, comparator, n):
 
     arr = sort_info.list
 
@@ -28,28 +27,28 @@ def heapify(sort_info, parent, comparator):
     # If largest is not root
     if largest != parent:
         arr[parent], arr[largest] = arr[largest], arr[parent]  # Swap
-        heapify(sort_info, largest, comparator)
+        heapify(sort_info, largest, comparator, n)
 
 
-def build_heap(sort_info, comparator):
+def build_heap(sort_info, comparator, n):
     for idx in range(n // 2 - 1, -1, -1):
-        heapify(sort_info, idx, comparator)
+        heapify(sort_info, idx, comparator, n)
 
 
-def extract_max(sort_info, comparator):
-    global n
+def extract_max(sort_info, comparator, n):
     arr = sort_info.list
     for idx in range(n-1, 0, -1):
         arr[0], arr[idx] = arr[idx], arr[0]  # Swap
 
         n -= 1
 
-        heapify(sort_info, 0, comparator)
+        heapify(sort_info, 0, comparator, n)
 
 
 def heap_sort(sort_info, comparator):
-    build_heap(sort_info, comparator)
-    extract_max(sort_info, comparator)
+    n = len(sort_info.list)
+    build_heap(sort_info, comparator, n)
+    extract_max(sort_info, comparator, n)
 
 
 ''' End of Heap building in place'''
@@ -94,7 +93,7 @@ def binary_insertion_sort(sort_info, start, end, comparator):
         arr[left] = key
 
 
-def merge(arr, left, mid, right, comparator, sort_info, screen):
+def merge(arr, left, mid, right, comparator):
     left_array = arr[left:mid + 1]
     right_array = arr[mid + 1:right + 1]
     i = 0
@@ -123,6 +122,7 @@ def merge(arr, left, mid, right, comparator, sort_info, screen):
 
 def timsort(sort_info, comparator):
     arr = sort_info.list
+    n = len(arr)
 
     # Split array into runs and sort each run using binary insertion sort
     for start in range(0, n, MIN_RUN_SIZE):
@@ -136,7 +136,7 @@ def timsort(sort_info, comparator):
             right = min((left + 2 * size - 1), (n - 1))
 
             if mid < right:
-                merge(arr, left, mid, right, comparator, sort_info)
+                merge(arr, left, mid, right, comparator)
 
         size *= 2
 
