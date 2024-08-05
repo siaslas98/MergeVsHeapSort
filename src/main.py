@@ -224,7 +224,7 @@ def loading_display(screen, sort_info, clock, reuse = 0):
         if sort_info.selected_order == "Descending":
             handle_descending(sort_info)
 
-        set_top_5(sort_info.selected_attribute, sort_info)
+        set_top_5(sort_info.selected_attribute, sort_info, sort_info.selected_order)
         loading_complete = True
 
         if loading_complete:

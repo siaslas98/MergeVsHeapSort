@@ -70,9 +70,18 @@ def handle_descending(sort_info):
     sort_info.list.reverse()
 
 
-def set_top_5(attribute, sort_info):
+def set_top_5(attribute, sort_info, order):
+    reverse_after = False
+    if order == "Ascending":
+        sort_info.list.reverse()
+        reverse_after = True
+    if order == "Descending":
+        sort_info.list.reverse()
+        reverse_after = True
     for stock in range(0, 5):
         sort_info.top_5[stock] = (sort_info.list[stock].name, get_attribute(attribute, sort_info, stock))
+    if reverse_after:
+        sort_info.list.reverse()
 
 
 def get_attribute(attribute, sort_info, n):
