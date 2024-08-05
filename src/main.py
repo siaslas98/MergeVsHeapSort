@@ -2,17 +2,15 @@ import pygame as pg
 from constants import *
 import sys
 import random
-from load_data import load_data
 from images import *
 from button import *
 from bars import *
 from box import *
-from node import Node
-from heap import Heap
 from sorting import *
 from draw import *
 from calculations import *
 from stock import *
+
 
 class SortInfo:
     def __init__(self):
@@ -40,28 +38,6 @@ class SortInfo:
         self.attribute_dropdown_expanded = False
         self.comparator = None
 
-    def reset(self):
-        self.sort = False
-        self.click = False
-        self.lst_sorted = False
-        self.selected_order = None
-        self.selected_attribute = None
-        self.top_5 = [0, 0, 0, 0, 0]
-        self.date = ""
-        self.heap_timer = None
-        self.timsort_timer = None
-        self.images = Images()
-        self.menu_buttons_group = pg.sprite.Group()
-        self.sort_buttons_group = pg.sprite.Group()
-        self.order_buttons_group = pg.sprite.Group()
-        self.attribute_buttons_group = pg.sprite.Group()
-        self.analyze_buttons_group = pg.sprite.Group()
-        self.input_box_group = pg.sprite.Group()
-        self.heap = None
-        self.bars = None
-        self.sort_dropdown_expanded = False
-        self.order_dropdown_expanded = False
-        self.attribute_dropdown_expanded = False
 
 def initialize_pygame():
     pg.init()
