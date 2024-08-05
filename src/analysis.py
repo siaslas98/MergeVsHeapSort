@@ -5,16 +5,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-# Initialize Pygame
-pg.init()
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-
-screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-clock = pg.time.Clock()
-pg.display.set_caption("Analyze stocks with Matplotlib and Pygame")
-
-
 class INFO:
     def __init__(self):
         self.start_date = ""
@@ -142,8 +132,6 @@ def check_stock_files():
 
 
 def analyze_action():
-    print("Analyze button clicked!")
-    # Perform further actions here
 
     if dropdown.selected is None:
         print("Please select a company.")
@@ -198,11 +186,10 @@ def analyze_action():
         print(f"Error loading or processing data: {e}")
 
 
-def main():
-    global info, dropdown, analyze_button, plot_image,  clock
+def analyze_real(screen, clock):
+    global info, dropdown, analyze_button, plot_image
 
     info = INFO()
-    # check_stock_files()
     dropdown = Dropdown(50, 150, 200, 35, info.BASE_FONT, ['Apple (AAPL)', 'Microsoft (MSFT)', 'Amazon (AMZN)', 'Alphabet (GOOGL)', 'Tesla (TSLA)'])
     analyze_button = Button(270, 150, 150, 35, "Analyze", info.BASE_FONT, analyze_action)
     plot_image = None
@@ -216,7 +203,7 @@ def main():
                 if info.input_active:
                     if event.key == pg.K_RETURN:
                         if info.input_type == "start_date":
-                            info.input_type = ("end_date")
+                            info.input_type = "end_date"
                             info.input_active = False
                             info.input_box_active["start_date"] = False
                         elif info.input_type == "end_date":
@@ -230,6 +217,7 @@ def main():
                             info.start_date = info.start_date[:-1]
                         elif info.input_type == "end_date":
                             info.end_date = info.end_date[:-1]
+                    # Handles text insertion
                     else:
                         if info.input_type == "start_date":
                             info.start_date += event.unicode
@@ -245,7 +233,7 @@ def main():
                                 info.end_date += '-'
 
             if event.type == pg.MOUSEBUTTONDOWN:
-                if not dropdown.handle_event(event):
+                if not dropdown.handle_event(event):  # This handles dropdown button events
                     for key in info.input_boxes:
                         if info.input_boxes[key].collidepoint(event.pos):
                             info.input_active = True
@@ -253,7 +241,7 @@ def main():
                             info.input_box_active[key] = True
                         else:
                             info.input_box_active[key] = False
-                analyze_button.handle_event(event)
+                analyze_button.handle_event(event)  # This handles analyze button events
 
         screen.fill((0, 0, 0))  # Fill the screen with black
         draw_input_boxes(screen, info)
@@ -262,12 +250,12 @@ def main():
 
         # Draw input text
         start_date_surf = info.BASE_FONT.render(info.start_date, True, (255, 255, 255))
-        screen.blit(start_date_surf, (info.START_DATE_POS[0] + 5, info.START_DATE_POS[1] + 5))
+        screen.blit(start_date_surf, (info.START_DATE_POS[0] + 5, info.START_DATE_POS[1] + 5))  # This centers the text within the input box
 
         end_date_surf = info.BASE_FONT.render(info.end_date, True, (255, 255, 255))
-        screen.blit(end_date_surf, (info.END_DATE_POS[0] + 5, info.END_DATE_POS[1] + 5))
+        screen.blit(end_date_surf, (info.END_DATE_POS[0] + 5, info.END_DATE_POS[1] + 5))  # This centers the text within the input box
 
-        # Adjust the width of the input box based on the text width
+        # Adjust the width of the input box based on the text width("Dynamic text box expansion")
         text_width = start_date_surf.get_width()
         info.input_boxes["start_date"].width = max(info.MIN_BOX_WIDTH, text_width + 10)
 
@@ -282,5 +270,3 @@ def main():
         clock.tick(60)
 
 
-if __name__ == "__main__":
-    main()

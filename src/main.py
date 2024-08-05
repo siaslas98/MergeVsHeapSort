@@ -1,6 +1,8 @@
 import pygame as pg
+import pandas as pd
 from constants import *
 import sys
+import os
 import random
 from images import *
 from button import *
@@ -10,6 +12,7 @@ from sorting import *
 from draw import *
 from calculations import *
 from stock import *
+from analysis import analyze_real
 
 
 class SortInfo:
@@ -30,7 +33,7 @@ class SortInfo:
         self.order_buttons_group = pg.sprite.Group()
         self.attribute_buttons_group = pg.sprite.Group()
         self.analyze_buttons_group = pg.sprite.Group()
-        self.input_box_group = pg.sprite.Group()
+        self.input_box_group = pg.sprite.Group()  # This is currently not being used
         self.heap = None
         self.bars = None
         self.sort_dropdown_expanded = False
@@ -187,7 +190,7 @@ def loading_display(screen, sort_info, clock, reuse = 0):
                 pg.quit()
                 sys.exit()
 
-        screen.blit(BACKGROUND_IMAGE, (0,0))
+        screen.blit(BACKGROUND_IMAGE, (0, 0))
         draw_text_with_outline(screen, FONT1, Loading_dialogue, loading_text_x, loading_text_y, pg.Color('black'), pg.Color('white'), 2)
 
         pg.display.update()
@@ -217,6 +220,7 @@ def main():
     while True:
         sort_info = SortInfo()
         initialize_buttons(screen, sort_info)
+        analyze_real(screen, clock)
         move_to_loading_screen = menu_display(screen, sort_info, clock)
         if move_to_loading_screen:
             move_to_loading_screen = False
