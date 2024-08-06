@@ -1,7 +1,3 @@
-import pygame as pg
-from box import Box
-from node import Node
-from bars import *
 from draw import *
 
 

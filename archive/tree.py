@@ -1,6 +1,5 @@
 import sys
-from constants import *
-from box import Box
+from archive.box import Box
 from sorting import *
 
 def gen_boxes(screen, sort_info):

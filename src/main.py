@@ -1,16 +1,5 @@
-import pygame as pg
-import pandas as pd
-from constants import *
 import sys
-import os
-import random
-from images import *
 from button import *
-from bars import *
-from box import *
-from sorting import *
-from draw import *
-from calculations import *
 from stock import *
 from analysis import analyze_real
 

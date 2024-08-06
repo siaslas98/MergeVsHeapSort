@@ -1,6 +1,5 @@
-import pygame as pg
 from constants import *
-from bars import get_bars_timsort
+from archive.bars import get_bars_timsort
 
 
 def draw_bar_graph(sort_info, screen, x, y, width, height, values):
@@ -65,8 +64,8 @@ def draw(screen, sort_info, bars=None, new_ele_idx=None, Category=None):
         draw_buttons(screen, sort_info, btn_type='Analyze')
     else:
         screen.blit(BACKGROUND_IMAGE, (0,0)) 
-        draw_text_with_outline(screen, FONT1, "Sorting Algorithm Visualizer", controls_menu, 5, pg.Color('white'), pg.Color('black'), 2)
-        draw_text_with_outline(screen, FONT2, "Click on the buttons to select the sorting order and attribute", controls_menu-80, 5 + Menu_Title_fake.get_height() + 10, pg.Color('white'), pg.Color('black'),2)
+        draw_text_with_outline(screen, FONT1, "Stock Market Analysis", controls_menu, 5, pg.Color('white'), pg.Color('black'), 2)
+        draw_text_with_outline(screen, FONT2, "Click on the buttons to select the sorting order and attribute", WINDOWSIZE[0] // 12, 5 + Menu_Title_fake.get_height() + 10, pg.Color('white'), pg.Color('black'),2)
         draw_buttons(screen, sort_info, btn_type='menu')
 
         # Draw the expanded dropdown menus if they are expanded

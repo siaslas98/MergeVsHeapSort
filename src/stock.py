@@ -1,8 +1,6 @@
 import random
-import string
 from sorting import *
 import os
-from timer import *
 from constants import *
 
 class Stock:
@@ -26,7 +24,7 @@ class Stock:
 
 
 company_names = []
-directory = 'Stocks/'
+directory = '../Stocks/'
 for filename in os.listdir(directory):
     stock_name = filename.split('.')[0].upper()
     company_names.append(stock_name)

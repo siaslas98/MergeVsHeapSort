@@ -7,7 +7,6 @@ pg.init()
 
 # Display size
 WINDOWSIZE = (1200, 800)
-#WINDOWSIZE = (1800, 1000)
 
 # range for the sorting 
 min_range = 10
@@ -30,7 +29,7 @@ CURRENT = 'Blue'
 UNSORTED = [(200, 200, 200), (128, 128, 128), (50, 50, 50)]
 
 # Background image
-BACKGROUND_IMAGE_PATH = 'imgs/Backgrounds/Cash.jpg'
+BACKGROUND_IMAGE_PATH = '../imgs/Backgrounds/Cash.jpg'
 TEMP = pg.image.load(BACKGROUND_IMAGE_PATH)
 BACKGROUND_IMAGE = pg.transform.scale(TEMP, WINDOWSIZE)
 
@@ -68,7 +67,7 @@ ANALYZE_BUTTON_POSITION = ( WINDOWSIZE[0]/4, MAIN_MENU_BUTTON_POSITION[1])
 
 # Image Dictionary
 # Key is path, value is reference name
-IMAGE_DICT = {'imgs/Blank.png': 'Blank'}
+IMAGE_DICT = {'../imgs/Blank.png': 'Blank'}
 
 # Additional button attributes
 SCALE = 1
@@ -79,8 +78,8 @@ TITLE_TO_TIPS_OFFSET = 20
 
 sorting_bottom = int(WINDOWSIZE[1] * 0.85)
 
-Menu_Title = "Sorting Algorithm Visualizer"
-Menu_Title_fake = FONT1.render("Sorting Algorithm Visualizer", 1, TEXT_COLOR1)
+Menu_Title = "Stock Market Analysis"
+Menu_Title_fake = FONT1.render("Stock Market Analysis", 1, TEXT_COLOR1)
 
 controls_menu = WINDOWSIZE[0] / 2 - Menu_Title_fake.get_width()/2
 
@@ -106,7 +105,6 @@ Analyze_tips = "Below are the top 5 stocks"
 Analyze_tips_fake = FONT2.render("Below are the top 5 stocks", 1, TEXT_COLOR1)
 analyze_tips_x = WINDOWSIZE[0] / 2 - Analyze_tips_fake.get_width()/2
 analyze_tips_y = analyze_title_y + Analyze_Title_fake.get_height() + TITLE_TO_TIPS_OFFSET
-
 
 
 # Sorting

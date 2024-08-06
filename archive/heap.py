@@ -1,7 +1,5 @@
-import pygame as pg
 import sys
-from constants import *
-from bars import get_bars_heapsort
+from archive.bars import get_bars_heapsort
 from draw import *
 
 
