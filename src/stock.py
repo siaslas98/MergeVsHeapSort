@@ -26,7 +26,7 @@ class Stock:
 
 
 company_names = []
-directory = '../Stocks/'
+directory = 'Stocks/'
 for filename in os.listdir(directory):
     stock_name = filename.split('.')[0].upper()
     company_names.append(stock_name)

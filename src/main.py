@@ -193,8 +193,17 @@ def analytics_screen(screen, sort_info, clock):
             i = 50
 
         values = []
-        for i in range(i):
-            values.append(get_attribute(sort_info.selected_attribute, sort_info, i))
+        if (sort_info.selected_order == "Ascending"):
+            for j in range(i):
+                if j == 0:
+                    values.append(get_attribute(sort_info.selected_attribute, sort_info, i))
+                elif j < i:
+                    values.append(get_attribute(sort_info.selected_attribute, sort_info, (n/i) *j))
+                elif j == i:
+                    values.append(get_attribute(sort_info.selected_attribute, sort_info, n - 1))
+        elif(sort_info.selected_order == "Descending"):
+            for i in range(i):
+                values.append(get_attribute(sort_info.selected_attribute, sort_info, int (n / 50) * i - 1))
         draw_bar_graph(sort_info, screen, WINDOWSIZE[0]/2 + 200, WINDOWSIZE[1]/5, 300, 300, values)
         pg.display.update()
         clock.tick(60)
@@ -236,7 +245,6 @@ def initialize_buttons(screen, sort_info):
 def main():
     screen = initialize_pygame()
     clock = pg.time.Clock()
-
     while True:
         sort_info = SortInfo()
         initialize_buttons(screen, sort_info)
@@ -250,7 +258,7 @@ def main():
             if sort_info.display_timeline:
                 analyze_real(screen, clock, sort_info)
                 sort_info.display_timeline = False
-       
+        
 
 
 if __name__ == "__main__":

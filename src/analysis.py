@@ -120,7 +120,7 @@ def draw_input_boxes(screen, info, color=(255, 255, 255)):
 # This is to check if the files within the provided list exists
 def check_stock_files():
     # Path to the Stocks folder
-    stocks_folder = '../Stocks'
+    stocks_folder = 'Stocks'
 
     # List of company file names to check
     company_files = ['aapl.us.csv', 'msft.us.csv', 'amzn.us.csv', 'googl.us.csv', 'tsla.us.csv']
@@ -153,7 +153,7 @@ def analyze_action():
         return
 
     # Load data and filter by date range
-    file_path = f'../Stocks/{selected_company_file_path}.us.csv'
+    file_path = f'Stocks/{selected_company_file_path}.us.csv'
     try:
         data = pd.read_csv(selected_company_file_path)
         data['Date'] = pd.to_datetime(data['Date'])
