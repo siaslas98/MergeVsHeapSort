@@ -1,0 +1,51 @@
+Worst Case Time Complexity Analysis For Heap and Tim sort
+n is the number of stock objects we are sorting(100,000)
+
+def heap_sort(...)
+
+    - List of stock objects are retrieved from sort_info.list
+    - Call build_heap() by passing in sort_info, a stock object comparator, and length of sort_info.list
+    - For each index in the list starting from n // 2 - 1 to 0, perform heapify() down at that index.
+        - Why not n but n // 2 - 1? This is because the last level in the tree representation of the heap already maintains the heap properties.
+        - For each index within this range we will have to perform O(log n) swapping operations at most as this represents
+          the height of the complete binary tree that this max heap represents. This also represents the maximum number of recursive heapify calls that will be made.
+        - Therefore since there are n // 2 stock objects that we have to perform heapify down on to build the heap.
+          build_heap() is an O(nlog n) operation.
+    - Call extract_max() by passing in sort_info, a stock object comparator, and length of sort_info.list
+    - This step sorts the heap in place.
+        - For every index from n-1 to 0, swap the maximum element(arr[0]) with arr[idx] which is the last element of the unprocessed heap.O(1)
+        - Decrement the heap size variable(n) by 1. This allows us to keep track of the end of the unprocessed section in the heap. O(1)
+        - Call heapify() down on the unprocessed portion of the heap. This is O(log n) as log n represents the maximum height of the complete tree the max heap represents.
+          This also represents the maximum number of recursive heapify calls we will make.
+
+    Overall, the worst case time complexity of heap_sort(...) is O(nlog n) after reducing and ignoring constant factors. The space complexity is
+    O(n) as we are not using any additional auxiliary memory during this in place sorting process.
+
+def tim_sort(...)
+
+    - List of stock objects are retrieved from sort_info.list
+    - MIN_RUN_SIZE = 32 (This is the length of the sub-arrays to perform binary insertion sort on.)
+
+    - Run a for loop from 0 to n and call binary_insertion_sort() by passing in sort_info, start, end, and a stock object comparator
+        on every subarray of size MIN_RUN_SIZE.
+        - Lets assume that the run size of 32 divides the length of the original array evenly and that number is k.
+        - So we will perform binary insertion sort for k sub-arrays.
+        - Binary insertion sort is optimized insertion sort, as it uses binary search to determine where to place the new
+         element from the unsorted region(right) into the sorted region(left) of the subarray(O log n). However after this position is determined,
+         the algorithm will still need to shift elements to the right before inserting the new element in the sorted region. Usually this is an O(j) operation. Where
+         j is the number of elements in the subarray.
+        - The only difference is that we can assume this shifting process to be O(1) because we are always dealing with a maximum run size of 32(j=32) everytime.
+        - Simplifying, the cost of binary insertion sort for the k runs is at most O(k), where k is the number of runs.
+    - Now that the k runs(sub-arrays) are sorted, we iteratively perform merging of the adjacent runs similar to how the merge sort
+    algorithm performs merging. At each pass of the while loop, we are doubling the size of the sorted runs by 2 using size *=2.
+    And at most we will have to double the runs log n times since there are n elements in the original array.
+    For each pass of the while loop, we perform merging for n elements.
+    Therefore, we will at most perform O(nlog n) work for the merging process.
+    Overall, the time complexity of this process will be O(nlog n) if we assume that the run size k(32) is less than
+    n the number of stock objects in our list. We do not utilize any additional auxiliary memory during the insertion or merging process, therefore
+    space complexity is simply O(n).
+
+
+
+
+
