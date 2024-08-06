@@ -132,35 +132,40 @@ def check_stock_files():
             print(f"File '{file_name}' does not exist in the '{stocks_folder}' folder.")
 
 
-def analyze_action():
+def analyze_action(top_5):
 
     if dropdown.selected is None:
         print("Please select a company.")
         return
 
     # Mapping of company names to their respective file names
-    company_map = {
-        'Apple': 'aapl',
-        'Microsoft': 'msft',
-        'Amazon': 'amzn',
-        'Alphabet': 'googl',
-        'Tesla': 'tsla'
-    }
+    # company_map = {
+    #     'Apple': 'aapl',
+    #     'Microsoft': 'msft',
+    #     'Amazon': 'amzn',
+    #     'Alphabet': 'googl',
+    #     'Tesla': 'tsla'
+    # }
+    top_5_names = [stock[0].lower() for stock in top_5]
 
     # Assuming 'dropdown.selected' is the selected company index and 'dropdown.options' contains company names
-    selected_company = dropdown.options[dropdown.selected].split(' ')[0]
-    selected_company_file = company_map.get(selected_company, "").lower()
+    # selected_company = dropdown.options[dropdown.selected].split(' ')[0]
+    selected_company = dropdown.options[dropdown.selected].lower()
+    print(selected_company)
+    selected_company_file_path = f'../Stocks/{selected_company}.us.csv'
+    print(selected_company_file_path)
+    # selected_company_file = company_map.get(selected_company, "").lower()
     start_date = info.start_date
     end_date = info.end_date
 
-    if not selected_company_file or not start_date or not end_date:
+    if not selected_company_file_path or not start_date or not end_date:
         print("Please select a company and enter valid start and end dates.")
         return
 
     # Load data and filter by date range
-    file_path = f'../Stocks/{selected_company_file}.us.csv'
+    # file_path = f'../Stocks/{selected_company_file}.us.csv'
     try:
-        data = pd.read_csv(file_path)
+        data = pd.read_csv(selected_company_file_path)
         data['Date'] = pd.to_datetime(data['Date'])
         data = data[(data['Date'] >= start_date) & (data['Date'] <= end_date)]
 
@@ -187,11 +192,12 @@ def analyze_action():
         print(f"Error loading or processing data: {e}")
 
 
-def analyze_real(screen, clock):
+def analyze_real(screen, clock, top_5):
     global info, dropdown, analyze_button, main_menu_button, plot_image
 
     info = INFO()
-    dropdown = Dropdown(50, 150, 200, 35, info.BASE_FONT, ['Apple (AAPL)', 'Microsoft (MSFT)', 'Amazon (AMZN)', 'Alphabet (GOOGL)', 'Tesla (TSLA)'])
+    # dropdown = Dropdown(50, 150, 200, 35, info.BASE_FONT, ['Apple', 'Microsoft', 'Amazon', 'Alphabet', 'Tesla'])
+    dropdown = Dropdown(50, 150, 200, 35, info.BASE_FONT, [stock[0] for stock in top_5])
     analyze_button = Button(270, 150, 150, 35, "Analyze", info.BASE_FONT, analyze_action)
 
     def return_to_main():

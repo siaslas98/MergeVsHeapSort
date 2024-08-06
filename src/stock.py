@@ -1,6 +1,7 @@
 import random
 import string
 from sorting import *
+import os
 from timer import *
 from constants import *
 
@@ -24,19 +25,11 @@ class Stock:
         return comparator
 
 
-company_names = [
-    "Apple", "Microsoft", "Amazon", "Google", "Facebook", "Tesla", "Alibaba", "Tencent", "Berkshire Hathaway",
-    "Johnson & Johnson", "Samsung", "Visa", "Walmart", "Nestle", "Procter & Gamble", "Mastercard", "Disney",
-    "PayPal", "Intel", "Nvidia", "ASML", "Coca-Cola", "Adobe", "Nike", "Salesforce", "Netflix", "Toyota", "PepsiCo",
-    "Pfizer", "Cisco", "ExxonMobil", "AT&T", "Verizon", "Merck", "Qualcomm", "Chevron", "IBM", "Oracle", "Unilever",
-    "McDonald's", "AbbVie", "Roche", "Novartis", "LVMH", "Amgen", "Costco", "Sony", "Bristol-Myers Squibb", "SAP",
-    "Starbucks", "Philip Morris International", "Texas Instruments", "Gilead Sciences", "S&P Global", "3M", "Booking Holdings",
-    "American Express", "Siemens", "Volkswagen", "Honeywell", "Schlumberger", "Colgate-Palmolive", "Bayer", "Lockheed Martin",
-    "Charter Communications", "China Mobile", "Royal Dutch Shell", "Boeing", "General Electric", "UPS", "Total",
-    "Anheuser-Busch", "Airbus", "Goldman Sachs", "Lowe's", "Target", "Morgan Stanley", "Deutsche Telekom", "GSK",
-    "Anthem", "Medtronic", "SAP", "UBS", "Danone", "BBVA", "Enel", "AstraZeneca", "Siemens Healthineers", "Vodafone",
-    "Rio Tinto", "Ericsson", "Heineken", "Stryker", "SABIC", "ABB", "WPP", "SK Hynix", "Kroger", "Sysco", "HP"
-]
+company_names = []
+directory = '../Stocks/'
+for filename in os.listdir(directory):
+    stock_name = filename.split('.')[0].upper()
+    company_names.append(stock_name)
 
 while len(company_names) < n:
     company_names.extend(company_names)

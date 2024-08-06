@@ -217,6 +217,7 @@ def initialize_buttons(screen, sort_info):
 def main():
     screen = initialize_pygame()
     clock = pg.time.Clock()
+
     while True:
         sort_info = SortInfo()
         initialize_buttons(screen, sort_info)
@@ -227,7 +228,7 @@ def main():
             if move_to_analytics_screen:
                 analytics_screen(screen, sort_info, clock)
                 move_to_analytics_screen = False
-                analyze_real(screen, clock)
+                analyze_real(screen, clock, sort_info.top_5)
 
 
 if __name__ == "__main__":
