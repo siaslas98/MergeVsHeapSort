@@ -3,6 +3,8 @@ import sys
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+import constants as c
+import draw as dr
 
 
 class INFO:
@@ -138,14 +140,6 @@ def analyze_action(top_5):
         print("Please select a company.")
         return
 
-    # Mapping of company names to their respective file names
-    # company_map = {
-    #     'Apple': 'aapl',
-    #     'Microsoft': 'msft',
-    #     'Amazon': 'amzn',
-    #     'Alphabet': 'googl',
-    #     'Tesla': 'tsla'
-    # }
     top_5_names = [stock[0].lower() for stock in top_5]
 
     # Assuming 'dropdown.selected' is the selected company index and 'dropdown.options' contains company names
@@ -163,7 +157,7 @@ def analyze_action(top_5):
         return
 
     # Load data and filter by date range
-    # file_path = f'../Stocks/{selected_company_file}.us.csv'
+    file_path = f'../Stocks/{selected_company_file}.us.csv'
     try:
         data = pd.read_csv(selected_company_file_path)
         data['Date'] = pd.to_datetime(data['Date'])
@@ -192,20 +186,13 @@ def analyze_action(top_5):
         print(f"Error loading or processing data: {e}")
 
 
-def analyze_real(screen, clock, top_5):
-    global info, dropdown, analyze_button, main_menu_button, plot_image
+
+def analyze_real(screen, clock, sort_info):
+    global info, dropdown, plot_image
 
     info = INFO()
-    # dropdown = Dropdown(50, 150, 200, 35, info.BASE_FONT, ['Apple', 'Microsoft', 'Amazon', 'Alphabet', 'Tesla'])
     dropdown = Dropdown(50, 150, 200, 35, info.BASE_FONT, [stock[0] for stock in top_5])
-    analyze_button = Button(270, 150, 150, 35, "Analyze", info.BASE_FONT, analyze_action)
 
-    def return_to_main():
-        nonlocal running
-        running = False
-
-
-    main_menu_button = Button(450, 150, 150, 35, "Main Menu", info.BASE_FONT, return_to_main())
     plot_image = None
     running = True
 
@@ -248,6 +235,14 @@ def analyze_real(screen, clock, top_5):
                                 info.end_date += '-'
 
             if event.type == pg.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+                # If the main menu button is pressed
+                for btn in sort_info.analyze_buttons_group2:
+                    if btn.rect.collidepoint(mouse_pos):
+                        if btn.name == 'Main Menu':
+                            return
+                        if btn.name == "Analyze":
+                            analyze_action()
                 if not dropdown.handle_event(event):  # This handles dropdown button events
                     for key in info.input_boxes:
                         if info.input_boxes[key].collidepoint(event.pos):
@@ -256,16 +251,13 @@ def analyze_real(screen, clock, top_5):
                             info.input_box_active[key] = True
                         else:
                             info.input_box_active[key] = False
-                analyze_button.handle_event(event)  # This handles analyze button events
-                if main_menu_button.handle_event(event):
-                    running = False
-
-
+            
+                
+            
         screen.fill((0, 0, 0))  # Fill the screen with black
         draw_input_boxes(screen, info)
         dropdown.draw(screen)
-        analyze_button.draw(screen)
-        main_menu_button.draw(screen)
+        dr.draw_buttons(screen, sort_info, 'Analyze2')
 
         # Draw input text
         start_date_surf = info.BASE_FONT.render(info.start_date, True, (255, 255, 255))
@@ -283,7 +275,7 @@ def analyze_real(screen, clock, top_5):
 
         # Blit the plot image if it exists
         if plot_image:
-            screen.blit(plot_image, (50, 250))
+            screen.blit(plot_image, (c.WINDOWSIZE[0]/4, c.WINDOWSIZE[1]/2 - 50 ))
 
         pg.display.update()
         clock.tick(60)

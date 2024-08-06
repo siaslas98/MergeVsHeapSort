@@ -33,7 +33,9 @@ class SortInfo:
         self.order_buttons_group = pg.sprite.Group()
         self.attribute_buttons_group = pg.sprite.Group()
         self.analyze_buttons_group = pg.sprite.Group()
+        self.analyze_buttons_group2 = pg.sprite.Group()
         self.input_box_group = pg.sprite.Group()  # This is currently not being used
+        self.display_timeline = False
         self.heap = None
         self.bars = None
         self.sort_dropdown_expanded = False
@@ -94,12 +96,23 @@ def gen_menu_buttons(screen, sort_info):
     # ******************************************************************
 
     analyze_buttons = [
-        ('Main Menu', MAIN_MENU_BUTTON_POSITION)
+        ('Main Menu', MAIN_MENU_BUTTON_POSITION),
+        ('Timeline', TIMELINE_BUTTON_POSITION),
     ]
     
     for name, pos in analyze_buttons:
         button = Button(screen, sort_info, name, pos[0], 700, SCALE, ELEVATION)
         sort_info.analyze_buttons_group.add(button)
+    # ******************************************************************
+
+    analyze_buttons_2 = [
+        ('Main Menu', MAIN_MENU_BUTTON_POSITION),
+        ('Analyze', ANALYZE_BUTTON_POSITION)
+    ]
+    
+    for name, pos in analyze_buttons_2:
+        button = Button(screen, sort_info, name, pos[0], 700, SCALE, ELEVATION)
+        sort_info.analyze_buttons_group2.add(button)
     # ******************************************************************
 
 
@@ -165,7 +178,13 @@ def analytics_screen(screen, sort_info, clock):
                 mouse_pos = event.pos
                 for btn in sort_info.analyze_buttons_group:
                     if btn.rect.collidepoint(mouse_pos):
-                        return
+                        if btn.name == 'Main Menu':
+                            sort_info.display_timeline = False
+                            return
+                        elif btn.name == 'Timeline':
+                            sort_info.display_timeline = True
+                            return
+
 
         draw(screen, sort_info, None, None, 'Analyze')
         if n < 50:
@@ -228,7 +247,10 @@ def main():
             if move_to_analytics_screen:
                 analytics_screen(screen, sort_info, clock)
                 move_to_analytics_screen = False
-                analyze_real(screen, clock, sort_info.top_5)
+            if sort_info.display_timeline:
+                analyze_real(screen, clock, sort_info)
+                sort_info.display_timeline = False
+       
 
 
 if __name__ == "__main__":
