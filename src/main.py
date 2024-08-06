@@ -236,6 +236,7 @@ def initialize_buttons(screen, sort_info):
 def main():
     screen = initialize_pygame()
     clock = pg.time.Clock()
+
     while True:
         sort_info = SortInfo()
         initialize_buttons(screen, sort_info)
@@ -249,7 +250,7 @@ def main():
             if sort_info.display_timeline:
                 analyze_real(screen, clock, sort_info)
                 sort_info.display_timeline = False
-        
+       
 
 
 if __name__ == "__main__":
