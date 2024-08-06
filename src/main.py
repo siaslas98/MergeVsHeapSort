@@ -194,13 +194,8 @@ def analytics_screen(screen, sort_info, clock):
 
         values = []
         if (sort_info.selected_order == "Ascending"):
-            for j in range(i):
-                if j == 0:
-                    values.append(get_attribute(sort_info.selected_attribute, sort_info, i))
-                elif j < i:
-                    values.append(get_attribute(sort_info.selected_attribute, sort_info, (n/i) *j))
-                elif j == i:
-                    values.append(get_attribute(sort_info.selected_attribute, sort_info, n - 1))
+            for i in range(i):
+                values.append(get_attribute(sort_info.selected_attribute, sort_info, int (n / 50) * i - 1))
         elif(sort_info.selected_order == "Descending"):
             for i in range(i):
                 values.append(get_attribute(sort_info.selected_attribute, sort_info, int (n / 50) * i - 1))
