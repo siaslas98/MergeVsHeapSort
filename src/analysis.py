@@ -134,7 +134,7 @@ def check_stock_files():
             print(f"File '{file_name}' does not exist in the '{stocks_folder}' folder.")
 
 
-def analyze_action(top_5):
+def analyze_action():
 
     if dropdown.selected is None:
         print("Please select a company.")
@@ -143,12 +143,8 @@ def analyze_action(top_5):
     top_5_names = [stock[0].lower() for stock in top_5]
 
     # Assuming 'dropdown.selected' is the selected company index and 'dropdown.options' contains company names
-    # selected_company = dropdown.options[dropdown.selected].split(' ')[0]
     selected_company = dropdown.options[dropdown.selected].lower()
-    print(selected_company)
     selected_company_file_path = f'../Stocks/{selected_company}.us.csv'
-    print(selected_company_file_path)
-    # selected_company_file = company_map.get(selected_company, "").lower()
     start_date = info.start_date
     end_date = info.end_date
 
@@ -157,7 +153,7 @@ def analyze_action(top_5):
         return
 
     # Load data and filter by date range
-    file_path = f'../Stocks/{selected_company_file}.us.csv'
+    file_path = f'../Stocks/{selected_company_file_path}.us.csv'
     try:
         data = pd.read_csv(selected_company_file_path)
         data['Date'] = pd.to_datetime(data['Date'])
@@ -188,7 +184,8 @@ def analyze_action(top_5):
 
 
 def analyze_real(screen, clock, sort_info):
-    global info, dropdown, plot_image
+    global info, dropdown, plot_image, top_5
+    top_5 = sort_info.top_5
 
     info = INFO()
     dropdown = Dropdown(50, 150, 200, 35, info.BASE_FONT, [stock[0] for stock in top_5])

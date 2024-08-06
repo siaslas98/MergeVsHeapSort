@@ -23,9 +23,10 @@ class Timer:
 
     def get_value(self):
         if self.running:
-            return self.elapsed_time + (time.time() - self.start_time)
+            value = self.elapsed_time + (time.time() - self.start_time)
         else:
-            return self.elapsed_time
+            value = self.elapsed_time
+        return round(value, 2)
     def reset(self):
         self.start_time = None
         self.elapsed_time = 0
