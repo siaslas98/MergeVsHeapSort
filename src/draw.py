@@ -3,8 +3,8 @@ from archive.bars import get_bars_timsort
 
 
 def draw_bar_graph(sort_info, screen, x, y, width, height, values):
-
     # Draw the background of the graph as a white rectangle
+
     pg.draw.rect(screen, (255, 255, 255), (x, y, width, height))
 
     # Calculate the width of each bar
@@ -77,32 +77,6 @@ def draw(screen, sort_info, bars=None, new_ele_idx=None, Category=None):
 
         if sort_info.attribute_dropdown_expanded:
             draw_buttons(screen, sort_info, btn_type='attribute')
-
-
-def visualize_merge_step(screen, sort_info, runs, unsorted_lst, comparator, final=False):
-    # Ensure runs and unsorted_lst are not empty
-    if not runs and not unsorted_lst:
-        return
-
-    combined_list = []
-    for run in runs:
-        if isinstance(run, list):
-            combined_list.extend(run)
-    combined_list.extend(unsorted_lst)
-
-    if not combined_list:
-        return
-
-    min_stock = min(combined_list, key=comparator)
-    max_stock = max(combined_list, key=comparator)
-
-    bars = get_bars_timsort(runs, unsorted_lst, SIDE_PAD, min_stock, max_stock, sort_info.selected_attribute, RUN_COLORS)
-    if not sort_info.ascending:
-        bars = bars[::-1]
-    draw(screen, sort_info, bars)
-    pg.display.update()
-    if not final:
-        pg.time.delay(50)  # Delay for visualization of each merge step
 
 
 def disp_message(screen, text, font, color, x, y):

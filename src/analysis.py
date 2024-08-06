@@ -19,7 +19,7 @@ class INFO:
         self.END_DATE_TEXT_POS = (50, 100)
         self.START_DATE_POS = (410, 45)  # Input box
         self.END_DATE_POS = (410, 95)  # Input box
-        self.BASE_FONT = pg.font.Font(None, 30)  # Default pygame font
+        self.BASE_FONT = pg.font.Font(None, 30)  # Default pygame font color used
         self.ACTIVE_COLOR = pg.Color('dodgerblue2')
         self.PASSIVE_COLOR = pg.Color('lightskyblue3')
         self.MIN_BOX_WIDTH = 100
@@ -248,9 +248,9 @@ def analyze_real(screen, clock, sort_info):
                             info.input_box_active[key] = True
                         else:
                             info.input_box_active[key] = False
-            
-                
-            
+
+
+
         screen.fill((0, 0, 0))  # Fill the screen with black
         draw_input_boxes(screen, info)
         dropdown.draw(screen)
