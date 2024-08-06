@@ -30,7 +30,11 @@ CURRENT = 'Blue'
 UNSORTED = [(200, 200, 200), (128, 128, 128), (50, 50, 50)]
 
 # Background image
+<<<<<<< HEAD
 BACKGROUND_IMAGE_PATH = 'imgs/Backgrounds/Cash.jpg'
+=======
+BACKGROUND_IMAGE_PATH = '../imgs/Backgrounds/Cash.jpg'
+>>>>>>> feature-branch-testing
 TEMP = pg.image.load(BACKGROUND_IMAGE_PATH)
 BACKGROUND_IMAGE = pg.transform.scale(TEMP, WINDOWSIZE)
 
@@ -62,13 +66,20 @@ OPENINT = (ATTRIBUTE_BUTTON[0], ATTRIBUTE_BUTTON[1] + 6 * DROPDOWN_OFFSET)
 
 # Analyze button position
 MAIN_MENU_BUTTON_POSITION = (MAIN_MENU_BUTTON[0], MAIN_MENU_BUTTON[1])
+<<<<<<< HEAD
 TIMELINE_BUTTON_POSITION = (WINDOWSIZE[0]/4, MAIN_MENU_BUTTON_POSITION[1])
 ANALYZE_BUTTON_POSITION = ( WINDOWSIZE[0]/4, MAIN_MENU_BUTTON_POSITION[1])
+=======
+>>>>>>> feature-branch-testing
 
 
 # Image Dictionary
 # Key is path, value is reference name
+<<<<<<< HEAD
 IMAGE_DICT = {'imgs/Blank.png': 'Blank'}
+=======
+IMAGE_DICT = {'../imgs/Blank.png': 'Blank'}
+>>>>>>> feature-branch-testing
 
 # Additional button attributes
 SCALE = 1

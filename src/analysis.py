@@ -3,8 +3,11 @@ import sys
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+<<<<<<< HEAD
 import constants as c
 import draw as dr
+=======
+>>>>>>> feature-branch-testing
 
 
 class INFO:
@@ -160,7 +163,11 @@ def analyze_action():
         return
 
     # Load data and filter by date range
+<<<<<<< HEAD
     file_path = f'Stocks/{selected_company_file}.us.csv'
+=======
+    file_path = f'../Stocks/{selected_company_file}.us.csv'
+>>>>>>> feature-branch-testing
     try:
         data = pd.read_csv(file_path)
         data['Date'] = pd.to_datetime(data['Date'])
@@ -189,12 +196,28 @@ def analyze_action():
         print(f"Error loading or processing data: {e}")
 
 
+<<<<<<< HEAD
 def analyze_real(screen, clock, sort_info):
     global info, dropdown, plot_image
 
     info = INFO()
     dropdown = Dropdown(50, 150, 200, 35, info.BASE_FONT, ['Apple (AAPL)', 'Microsoft (MSFT)', 'Amazon (AMZN)', 'Alphabet (GOOGL)', 'Tesla (TSLA)'])
 
+=======
+def analyze_real(screen, clock):
+    global info, dropdown, analyze_button, main_menu_button, plot_image
+
+    info = INFO()
+    dropdown = Dropdown(50, 150, 200, 35, info.BASE_FONT, ['Apple (AAPL)', 'Microsoft (MSFT)', 'Amazon (AMZN)', 'Alphabet (GOOGL)', 'Tesla (TSLA)'])
+    analyze_button = Button(270, 150, 150, 35, "Analyze", info.BASE_FONT, analyze_action)
+
+    def return_to_main():
+        nonlocal running
+        running = False
+
+
+    main_menu_button = Button(450, 150, 150, 35, "Main Menu", info.BASE_FONT, return_to_main())
+>>>>>>> feature-branch-testing
     plot_image = None
     running = True
 
@@ -237,6 +260,7 @@ def analyze_real(screen, clock, sort_info):
                                 info.end_date += '-'
 
             if event.type == pg.MOUSEBUTTONDOWN:
+<<<<<<< HEAD
                 mouse_pos = event.pos
                 # If the main menu button is pressed
                 for btn in sort_info.analyze_buttons_group2:
@@ -245,6 +269,8 @@ def analyze_real(screen, clock, sort_info):
                             return
                         if btn.name == "Analyze":
                             analyze_action()
+=======
+>>>>>>> feature-branch-testing
                 if not dropdown.handle_event(event):  # This handles dropdown button events
                     for key in info.input_boxes:
                         if info.input_boxes[key].collidepoint(event.pos):
@@ -253,6 +279,7 @@ def analyze_real(screen, clock, sort_info):
                             info.input_box_active[key] = True
                         else:
                             info.input_box_active[key] = False
+<<<<<<< HEAD
             
                 
             
@@ -260,6 +287,18 @@ def analyze_real(screen, clock, sort_info):
         draw_input_boxes(screen, info)
         dropdown.draw(screen)
         dr.draw_buttons(screen, sort_info, 'Analyze2')
+=======
+                analyze_button.handle_event(event)  # This handles analyze button events
+                if main_menu_button.handle_event(event):
+                    running = False
+
+
+        screen.fill((0, 0, 0))  # Fill the screen with black
+        draw_input_boxes(screen, info)
+        dropdown.draw(screen)
+        analyze_button.draw(screen)
+        main_menu_button.draw(screen)
+>>>>>>> feature-branch-testing
 
         # Draw input text
         start_date_surf = info.BASE_FONT.render(info.start_date, True, (255, 255, 255))
@@ -277,7 +316,11 @@ def analyze_real(screen, clock, sort_info):
 
         # Blit the plot image if it exists
         if plot_image:
+<<<<<<< HEAD
             screen.blit(plot_image, (c.WINDOWSIZE[0]/4, c.WINDOWSIZE[1]/2 - 50 ))
+=======
+            screen.blit(plot_image, (50, 250))
+>>>>>>> feature-branch-testing
 
         pg.display.update()
         clock.tick(60)

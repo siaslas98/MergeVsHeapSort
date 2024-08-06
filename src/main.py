@@ -33,9 +33,13 @@ class SortInfo:
         self.order_buttons_group = pg.sprite.Group()
         self.attribute_buttons_group = pg.sprite.Group()
         self.analyze_buttons_group = pg.sprite.Group()
+<<<<<<< HEAD
         self.analyze_buttons_group2 = pg.sprite.Group()
         self.input_box_group = pg.sprite.Group()  # This is currently not being used
         self.display_timeline = False
+=======
+        self.input_box_group = pg.sprite.Group()  # This is currently not being used
+>>>>>>> feature-branch-testing
         self.heap = None
         self.bars = None
         self.sort_dropdown_expanded = False
@@ -96,8 +100,12 @@ def gen_menu_buttons(screen, sort_info):
     # ******************************************************************
 
     analyze_buttons = [
+<<<<<<< HEAD
         ('Main Menu', MAIN_MENU_BUTTON_POSITION),
         ('Timeline', TIMELINE_BUTTON_POSITION),
+=======
+        ('Main Menu', MAIN_MENU_BUTTON_POSITION)
+>>>>>>> feature-branch-testing
     ]
     
     for name, pos in analyze_buttons:
@@ -105,6 +113,7 @@ def gen_menu_buttons(screen, sort_info):
         sort_info.analyze_buttons_group.add(button)
     # ******************************************************************
 
+<<<<<<< HEAD
     analyze_buttons_2 = [
         ('Main Menu', MAIN_MENU_BUTTON_POSITION),
         ('Analyze', ANALYZE_BUTTON_POSITION)
@@ -115,6 +124,8 @@ def gen_menu_buttons(screen, sort_info):
         sort_info.analyze_buttons_group2.add(button)
     # ******************************************************************
 
+=======
+>>>>>>> feature-branch-testing
 
 def menu_display(screen, sort_info, clock):
     while True:
@@ -178,6 +189,7 @@ def analytics_screen(screen, sort_info, clock):
                 mouse_pos = event.pos
                 for btn in sort_info.analyze_buttons_group:
                     if btn.rect.collidepoint(mouse_pos):
+<<<<<<< HEAD
                         if btn.name == 'Main Menu':
                             sort_info.display_timeline = False
                             return
@@ -185,6 +197,9 @@ def analytics_screen(screen, sort_info, clock):
                             sort_info.display_timeline = True
                             return
 
+=======
+                        return
+>>>>>>> feature-branch-testing
 
         draw(screen, sort_info, None, None, 'Analyze')
         if n < 50:
@@ -246,10 +261,14 @@ def main():
             if move_to_analytics_screen:
                 analytics_screen(screen, sort_info, clock)
                 move_to_analytics_screen = False
+<<<<<<< HEAD
             if sort_info.display_timeline:
                 analyze_real(screen, clock, sort_info)
                 sort_info.display_timeline = False
         
+=======
+                analyze_real(screen, clock)
+>>>>>>> feature-branch-testing
 
 
 if __name__ == "__main__":
