@@ -23,10 +23,7 @@ class SortInfo:
         self.attribute_buttons_group = pg.sprite.Group()
         self.analyze_buttons_group = pg.sprite.Group()
         self.analyze_buttons_group2 = pg.sprite.Group()
-        self.input_box_group = pg.sprite.Group()  # This is currently not being used
         self.display_timeline = False
-        self.heap = None
-        self.bars = None
         self.sort_dropdown_expanded = False
         self.order_dropdown_expanded = False
         self.attribute_dropdown_expanded = False
@@ -174,7 +171,6 @@ def analytics_screen(screen, sort_info, clock):
                             sort_info.display_timeline = True
                             return
 
-
         draw(screen, sort_info, None, None, 'Analyze')
         if n < 50:
             i = n
@@ -182,6 +178,7 @@ def analytics_screen(screen, sort_info, clock):
             i = 50
 
         values = []
+
         if (sort_info.selected_order == "Ascending"):
             for i in range(i):
                 if i == 0:
@@ -199,7 +196,7 @@ def analytics_screen(screen, sort_info, clock):
         clock.tick(60)
 
 
-def loading_display(screen, sort_info, clock, reuse = 0):
+def loading_display(screen, sort_info, clock, reuse=0):
     loading_complete = False
 
     while True:
@@ -216,6 +213,7 @@ def loading_display(screen, sort_info, clock, reuse = 0):
 
         gen_starting_list(sort_info)
 
+        # Sorting functionality gets called here
         sort_off_attribute(sort_info.selected_attribute, sort_info)
 
         if sort_info.selected_order == "Descending":
@@ -249,7 +247,6 @@ def main():
                 analyze_real(screen, clock, sort_info)
                 sort_info.display_timeline = False
         
-
 
 if __name__ == "__main__":
     main()
